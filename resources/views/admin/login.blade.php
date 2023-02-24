@@ -26,9 +26,9 @@
         <div class="row w-100 mx-0">
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-              <div class="brand-logo">
+              <div class="brand-logo d-flex align-items-center">
                 <img src="{{ url('admin/gif/ukraine_flag.gif') }}" style="width: 60px" alt="logo">
-                <span class="creative-font">Sector</span>
+                <span class="creative-font">Ukrainian Sector</span>
               </div>
               <h4>Hello! let's get started</h4>
               <h6 class="font-weight-light">Sign in to continue.</h6>

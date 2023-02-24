@@ -41,7 +41,7 @@ class ProductsController extends Controller
 
                 $categoryProducts = $categoryProducts->paginate(3);
                 //dd($categoryProducts);
-                return view('front.products.ajax_products_listing')->with(compact('categoryDetails', 'categoryProducts'));
+                return view('front.products.ajax_products_listing')->with(compact('categoryDetails', 'categoryProducts', 'url'));
             } else {
                 abort(404);
             }
@@ -70,9 +70,9 @@ class ProductsController extends Controller
                     }
                 }
 
-                $categoryProducts = $categoryProducts->paginate(4);
+                $categoryProducts = $categoryProducts->paginate(3);
                 //dd($categoryProducts);
-                return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts'));
+                return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts', 'url'));
             } else {
                 abort(404);
             }

@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('banners', function ($table) {
-            $table->string('type')->after('image');
+        Schema::create('products_filters_values', function (Blueprint $table) {
+            $table->id();
+            $table->integer('filter_id');
+            $table->string('filter_value');
+            $table->tinyInteger('status');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('banners', function ($table) {
-            $table->dropColumn('type');
-        });
+        Schema::dropIfExists('products_filters_values');
     }
 };

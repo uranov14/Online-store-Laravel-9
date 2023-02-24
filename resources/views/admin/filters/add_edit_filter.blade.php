@@ -1,4 +1,4 @@
-@extends('admin.layout.layout')
+@extends('admin.layouts.layout')
 
 @section('content')
 <div class="main-panel">
@@ -144,7 +144,7 @@
     </div>
     <!-- content-wrapper ends -->
     <!-- partial:partials/_footer.html -->
-    @include('admin.layout.footer')
+    @include('admin.layouts.footer')
     <!-- partial -->
   </div>
 @endsection

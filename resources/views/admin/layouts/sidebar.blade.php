@@ -187,6 +187,7 @@
                                 || Session::get('page') == "brands" 
                                 || Session::get('page') == "products" 
                                 || Session::get('page') == "filters"
+                                || Session::get('page') == "filters_values"
                                 )
                     activeNavItem
                 @endif" 
@@ -257,7 +258,7 @@
                     <li class="nav-item">
                         <a 
                             id="sec"
-                            @if (Session::get('page') == "filters")
+                            @if (Session::get('page') == "filters" || Session::get('page') == "filters_values")
                                 class="nav-link activeNavItem"
                             @else
                                 class="nav-link notActiveNavItem"

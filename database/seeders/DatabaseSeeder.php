@@ -22,11 +22,11 @@ class DatabaseSeeder extends Seeder
         //$this->call(SectionsProductTableSeeder::class);
         //$this->call(CategoryTableSeeder::class);
         //$this->call(BrandsTableSeeder::class);
-        $this->call(ProductsTableSeeder::class);
+        //$this->call(ProductsTableSeeder::class);
         //$this->call(ProductAttributesTableSeeder::class);
         //$this->call(BannersTableSeeder::class);
         //$this->call(FiltersTableSeeder::class);
-        //$this->call(FiltersValuesTableSeeder::class);
+        $this->call(FiltersValuesTableSeeder::class);
         //$this->call(CountrySeeder::class);
     }
 }
