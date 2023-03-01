@@ -80,7 +80,7 @@
                 <div class="form-group">
                   <label for="category_id">Select Category</label>
                   <select class="form-control text-dark"  name="category_id" id="category_id">
-                    <option value="" style="display: none">Select</option>
+                    <option value="" style="display: none">Select</option> 
                     @foreach ($categories as $section)
                       <optgroup label="{{ $section['name'] }}"></optgroup>
                       @foreach ($section['categories'] as $category)
@@ -105,6 +105,9 @@
                       @endforeach
                     @endforeach
                   </select>
+                </div>
+                <div class="loadFilters">
+                  @include('admin.filters.category_filters')
                 </div>
                 <div class="form-group">
                   <label for="brand_id">Select Brand</label>

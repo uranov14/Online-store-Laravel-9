@@ -99,7 +99,7 @@
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <a href="{{ url('admin/add-edit-filter') }}">
+                            <a href="{{ url('admin/add-edit-filter/'.$filter['id']) }}">
                               <i class="mdi mdi-pencil-box"></i>
                             </a>
                             <span>Edit</span>

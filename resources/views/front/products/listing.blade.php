@@ -50,17 +50,17 @@
                 <div class="page-bar clearfix">
 
                     <div class="shop-settings">
-                        <a id="grid-anchor" class="active">
-                            <i class="fas fa-th"></i>
-                        </a>
                         <a id="list-anchor">
                             <i class="fas fa-th-list"></i>
+                        </a>
+                        <a id="grid-anchor" class="active">
+                            <i class="fas fa-th"></i>
                         </a>        
                     </div>
 
                     <!-- Toolbar Sorter 1  -->
                     <form name="sortProducts" id="sortProducts">
-                        <input type="hidden" name="url" id="url" value="{{ $categoryDetails['categoryDetails']['url'] }}">
+                        <input type="hidden" name="url" id="url" value="{{ $url }}">
                         <div class="toolbar-sorter">
                             <div class="select-box-wrapper">
                                 <label class="sr-only" for="sort">Sort By</label>

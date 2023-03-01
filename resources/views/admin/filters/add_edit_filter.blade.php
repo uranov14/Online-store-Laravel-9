@@ -71,14 +71,14 @@
                 @else
                 action="{{ url('admin/add-edit-filter/'.$filter['id']) }}"    
                 @endif
-                method="POST"
+                method="post"
                 enctype="multipart/form-data"
               >
               @csrf
                 <div class="form-group">
-                  <label for="cat_ids">Select Category</label>
+                  <label for="cat_ids[]">Select Category</label>
                   <select class="form-control text-dark"  name="cat_ids[]" id="cat_ids" multiple>
-                    <option value="" >Select</option>
+                    <option value="" style="display: none">Select</option>
                     @foreach ($categories as $section)
                       <optgroup label="{{ $section['name'] }}"></optgroup>
                       @foreach ($section['categories'] as $category)

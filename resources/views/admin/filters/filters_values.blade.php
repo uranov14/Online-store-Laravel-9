@@ -97,7 +97,7 @@
                           @endif
                         </td>
                         <td>
-                          <a href="{{ url('admin/add-edit-filter/'.$filter['id']) }}">
+                          <a href="{{ url('admin/add-edit-filter-value/'.$filter['id']) }}">
                             <i class="mdi mdi-pencil-box"></i>
                           </a>
                           {{-- <a 

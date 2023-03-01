@@ -99,5 +99,7 @@ ga('send', 'pageview')
 <script type="text/javascript" src="{{ url('front/js/app.js') }}"></script>
 <!-- Custom -->
 <script type="text/javascript" src="{{ url('front/js/custom.js') }}"></script>
+
+@include('front.layout.scripts')
 </body>
 </html>

@@ -76,7 +76,20 @@
               >
               @csrf
                 <div class="form-group">
-                  <label for="filterValue_name">Filter Value Name</label>
+                  <label for="filter_id">Select Filter</label>
+                  <select class="form-control text-dark"  name="filter_id" id="filter_id">
+                    <option value="" style="display: none">Select</option> 
+
+                    @foreach ($filters as $filter)
+                      <option value="{{ $filter['id'] }}"> 
+                        {{ $filter['filter_name'] }}
+                      </option>
+                    @endforeach 
+
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="filter_value">Filter Value</label>
                   <input 
                     type="text" 
                     class="form-control" 
@@ -85,24 +98,9 @@
                     @else
                     value="{{ old('filter_value') }}"   
                     @endif 
-                    name="filterValue_name" 
-                    id="filterValue_name" 
+                    name="filter_value" 
+                    id="filter_value" 
                     placeholder="Enter Filter Value Name"
-                  >
-                </div>
-                <div class="form-group">
-                  <label for="filter_column">Filter Column</label>
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    @if (!empty($filter['filter_column']))
-                    value="{{ $filter['filter_column'] }}"
-                    @else
-                    value="{{ old('filter_column') }}"   
-                    @endif 
-                    name="filter_column" 
-                    id="filter_column" 
-                    placeholder="Enter Filter Column"
                   >
                 </div> 
                 <button type="submit" class="btn btn-primary mr-2">Submit</button>
