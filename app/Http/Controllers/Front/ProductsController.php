@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductsFilter; 
+use App\Models\ProductsAttribute; 
 
 class ProductsController extends Controller
 {
@@ -43,8 +44,47 @@ class ProductsController extends Controller
                     } else if ($_GET['sort'] == 'name_a_z') {
                         $categoryProducts->orderBy('products.product_name', 'Asc');
                     } else if ($_GET['sort'] == 'name_z_a') {
-                        $categoryProducts->orderBy('products.product_name', 'Desc');
+                        $categoryProducts->orderBy('get_filterproduct_name', 'Desc');
                     }
+                }
+
+                //checking for Size
+                if (isset($data['size']) && !empty($data['size'])) {
+                    $productIds = ProductsAttribute::select('product_id')->whereIn('size', $data['size'])->pluck('product_id')->toArray();
+                    $categoryProducts->whereIn('products.id', $productIds);
+                }
+
+                //checking for Color
+                if (isset($data['color']) && !empty($data['color'])) {
+                    $productIds = Product::select('id')->whereIn('product_color', $data['color'])->pluck('id')->toArray();
+                    $categoryProducts->whereIn('products.id', $productIds);
+                }
+
+                //checking for Price
+                if (isset($data['price']) && !empty($data['price'])) {
+                    //echo "<pre>"; print_r($data['price']); die;
+                    
+                    foreach ($data['price'] as $key => $price) {
+                        $priceArr = explode('-', $price);
+                        $productIds[] = Product::select('id')->whereBetween('product_price', [$priceArr[0], $priceArr[1]])->pluck('id')->toArray();
+                    }
+                    
+                    $productIds = call_user_func_array('array_merge', $productIds);
+                    //echo "<pre>"; print_r($productIds); die;
+                    $categoryProducts->whereIn('products.id', $productIds);
+                    /* $implodePrices = implode('-', $data['price']);
+                    $explodePrices = explode('-', $implodePrices);
+                    $min = reset($explodePrices);
+                    $max = end($explodePrices);
+
+                    $productIds = Product::select('id')->whereBetween('product_price', [$min, $max])->pluck('id')->toArray();
+                    $categoryProducts->whereIn('products.id', $productIds); */
+                }
+
+                //checking for Brand
+                if (isset($data['brand']) && !empty($data['brand'])) {
+                    $productIds = Product::select('id')->whereIn('brand_id', $data['brand'])->pluck('id')->toArray();
+                    $categoryProducts->whereIn('products.id', $productIds);
                 }
 
                 $categoryProducts = $categoryProducts->paginate(30);
@@ -86,5 +126,9 @@ class ProductsController extends Controller
             }
         }
         
+    }
+
+    public function detail(Request $request) {
+        return view('front.products.detail');
     }
 }

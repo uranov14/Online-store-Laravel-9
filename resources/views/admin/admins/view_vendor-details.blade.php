@@ -278,19 +278,42 @@
                         <h4 class="card-title">Bank Information</h4>
                         <div class="form-group">
                             <label>Account Holder Name</label>
-                            <input class="form-control" value="{{ $vendorDetails['vendor_bank']['account_holder_name'] }}" readonly>
+                            <input class="form-control" 
+                                @if (isset($vendorDetails['vendor_bank']['account_holder_name']))
+                                value="{{ $vendorDetails['vendor_bank']['account_holder_name'] }}" 
+                                @endif 
+                                readonly
+                            >
                         </div>
                         <div class="form-group">
                             <label for="vendor_address">Account Numder</label>
-                            <input type="text" class="form-control" value="{{ $vendorDetails['vendor_bank']['account_number'] }}" readonly>
+                            <input type="text" 
+                                class="form-control" 
+                                @if (isset($vendorDetails['vendor_bank']['account_number']))
+                                value="{{ $vendorDetails['vendor_bank']['account_number'] }}" 
+                                @endif 
+                                readonly
+                            >
                         </div>
                         <div class="form-group">
                             <label for="vendor_name">Bank Name</label>
-                            <input type="text" class="form-control" value="{{ $vendorDetails['vendor_bank']['bank_name'] }}" readonly>
+                            <input type="text" 
+                                class="form-control" 
+                                @if (isset($vendorDetails['vendor_bank']['bank_name']))
+                                value="{{ $vendorDetails['vendor_bank']['bank_name'] }}" 
+                                @endif
+                                readonly
+                            >
                         </div>
                         <div class="form-group">
                             <label for="vendor_city">Bank IFSC Code</label>
-                            <input type="text" class="form-control" value="{{ $vendorDetails['vendor_bank']['bank_ifsc_code'] }}" readonly>
+                            <input type="text" 
+                                class="form-control" 
+                                @if (isset($vendorDetails['vendor_bank']['bank_ifsc_code']))
+                                value="{{ $vendorDetails['vendor_bank']['bank_ifsc_code'] }}" 
+                                @endif 
+                                readonly
+                            >
                         </div>
                     </div>
                 </div>

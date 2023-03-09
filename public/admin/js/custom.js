@@ -51,7 +51,7 @@ $(document).ready(function() {
                     $("#admin-"+admin_id).html("<i class='mdi mdi-bookmark-check' status='Active'></i>")
                 }
             },error: function() {
-                alert('Error');
+                alert('Error with Admin Status');
             }
         })
     })
@@ -383,7 +383,7 @@ $(document).ready(function() {
             success: function(resp) {
                 $(".loadFilters").html(resp.view);            
             },error: function() {
-                alert('Error');
+                alert('Error with category');
             }
         })
     })

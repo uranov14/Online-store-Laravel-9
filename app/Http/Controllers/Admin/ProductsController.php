@@ -19,7 +19,19 @@ class ProductsController extends Controller
 {
     public function products() {
         Session::put('page', "products");
-        $products = Product::with(['section', 'category'])->get()->toArray();
+        $adminType = Auth::guard('admin')->user()->type;
+        $vendor_id = Auth::guard('admin')->user()->vendor_id;
+        $products = Product::with(['section', 'category']);
+        if ($adminType == "vendor") {
+            $vendorStatus = Auth::guard('admin')->user()->status;
+            if ($vendorStatus == 0) {
+                return redirect('admin/update-vendor-details/personal')->with('error_message', "Your Vendor Account is not approved yet. Please make sure to fill your valid personal, business and bank details");
+            } else {
+                $products = $products->where('vendor_id', $vendor_id);
+            }
+        } 
+        
+        $products = $products->get()->toArray();
         //dd($products);
         return view('admin.products.products')->with(compact('products'));
     }
@@ -137,7 +149,7 @@ class ProductsController extends Controller
 
                 if ($filterAvailable == 'Yes' 
                 && isset($filter['filter_column']) 
-                && $data[$filter['filter_column']]) {
+                && !empty($data[$filter['filter_column']])) {
                     $product->{ $filter['filter_column'] } = $data[$filter['filter_column']];
                 }
             }
@@ -252,10 +264,10 @@ class ProductsController extends Controller
                         return redirect()->back()->with('error_message', "SKU already exists! Please add another SKU!");
                     }
                     //Check duplicate Size
-                    $sizeCount = ProductsAttribute::where('size', $data['size'][$key])->count();
+                    /* $sizeCount = ProductsAttribute::where('size', $data['size'][$key])->count();
                     if ($sizeCount > 0) {
                         return redirect()->back()->with('error_message', "Size already exists! Please add another Size!");
-                    }
+                    } */
 
                     //Save Attributes in products_attributes table
                     $attribute = new ProductsAttribute;

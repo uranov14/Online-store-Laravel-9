@@ -10,7 +10,7 @@
                 @php
                     $product_image_path = 'front/images/product_images/small/'.$product['product_image'];
                 @endphp
-                <a class="item-img-wrapper-link" href="single-product.html">
+                <a class="item-img-wrapper-link" href="{{ url('product/'.$product['id']) }}">
                     @if (!empty($product['product_image']) && file_exists($product_image_path))
                     <img class="img-fluid" src="{{ asset($product_image_path) }}" alt="Product Image">
                     @else

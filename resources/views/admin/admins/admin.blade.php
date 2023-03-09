@@ -60,7 +60,11 @@
                             {{ $admin['email'] }}
                         </td>
                         <td>
-                            <img src="{{ asset('admin/images/photos/'.$admin['image']) }}" alt="Vendor image">
+                          @if (!empty($admin['image']))
+                          <img src="{{ asset('admin/images/photos/'.$admin['image']) }}" alt="Vendor image">
+                          @else
+                          <img src="{{ asset('admin/images/photos/no-image.png') }}" alt="Vendor image"> 
+                          @endif
                         </td>
                         <td>
                             @if ($admin['status'] == 1)

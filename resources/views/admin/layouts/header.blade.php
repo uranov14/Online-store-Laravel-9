@@ -81,7 +81,7 @@
                     @if (!empty(Auth::guard('admin')->user()->image))
                         <img class="profile-img" src="{{ asset('admin/images/photos/'.Auth::guard('admin')->user()->image) }}" alt="admin image" />
                     @else
-                        <img class="profile-img" src="{{ asset('admin/images/faces/my_face.jpg') }}" alt="profile image"/>
+                        <img class="profile-img" src="{{ asset('admin/images/photos/no-image.png') }}" alt="profile image"/>
                     @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">

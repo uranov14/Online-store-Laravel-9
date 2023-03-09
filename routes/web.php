@@ -117,4 +117,16 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
     foreach ($categoriesUrls as $key => $url) {
         Route::match(['get', 'post'],'/'.$url, 'ProductsController@listing');
     } 
+
+    //Product Detail Page
+    Route::get('/product/{id}', 'ProductsController@detail');
+
+    //Vendor Register/login
+    Route::get('vendor/login-register', 'VendorController@loginRegister');
+
+    //Vendor Register
+    Route::post('vendor/register', 'VendorController@vendorRegister');
+
+    //Confirm Vendor Account
+    Route::get('vendor/confirm/{code}', 'VendorController@confirmVendor');
 });
