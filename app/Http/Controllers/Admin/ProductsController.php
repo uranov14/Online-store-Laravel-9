@@ -64,7 +64,7 @@ class ProductsController extends Controller
 
         if ($request->isMethod('post')) {
             $data = $request->all();
-
+            //dd($data);
             if(empty($data['product_discount'])) {
                 $data['product_discount'] = 0;
             }

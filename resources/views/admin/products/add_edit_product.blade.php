@@ -8,7 +8,7 @@
           <div class="row">
             <div class="col-12 col-xl-8 mb-4 mb-xl-0">
               <a href="{{ url('admin/products') }}" class="btn btn-dark">
-                Products
+                Back to Products
               </a>
             </div>
             <div class="col-12 col-xl-4">
@@ -73,7 +73,7 @@
                 @else
                 action="{{ url('admin/add-edit-product/'.$product['id']) }}"    
                 @endif
-                method="POST"
+                method="post"
                 enctype="multipart/form-data"
               >
               @csrf

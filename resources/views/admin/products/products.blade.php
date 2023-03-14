@@ -1,7 +1,7 @@
 @extends('admin.layouts.layout')
 
 @section('content')
-<div class="main-panel">
+<div class="main-panel prod-panel">
     <div class="content-wrapper">
       <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
@@ -131,12 +131,12 @@
                           </a>
                         </div>
                         <div>
-                          <a title="Add attributes" href="{{ url('admin/add-attributes/'.$product['id']) }}">
+                          <a title="Add edit attributes" href="{{ url('admin/add-attributes/'.$product['id']) }}">
                             <i class="mdi mdi-plus-box"></i>
                           </a>
                         </div>
                         <div>
-                          <a title="Add altenative images" href="{{ url('admin/add-images/'.$product['id']) }}">
+                          <a title="Add alternative images" href="{{ url('admin/add-images/'.$product['id']) }}">
                             <i class="mdi mdi-image-multiple"></i>
                           </a>
                         </div>

@@ -14,7 +14,7 @@ class Product extends Model
     }
 
     public function category() {
-        return $this->belongsTo('App\Models\Category', 'category_id')->select('id', 'category_name');
+        return $this->belongsTo('App\Models\Category', 'category_id');
     }
 
     public function brand() {
@@ -27,6 +27,10 @@ class Product extends Model
 
     public function images() {
         return $this->hasMany('App\Models\ProductsImage');
+    }
+
+    public function vendor() {
+        return $this->belongsTo('App\Models\Vendor', 'vendor_id')->with('vendorbusinessdetails');
     }
 
     public static function getDiscountPrice($product_id) {
@@ -44,6 +48,29 @@ class Product extends Model
             $discountedPrice = $productDetails['product_price'];
         }
         return $discountedPrice;
+    }
+
+    public static function getDiscountAttributePrice($product_id, $size) {
+        $productPrice = ProductsAttribute::where(['product_id'=>$product_id, 'size'=>$size])->first()->toArray();
+
+        $productDetails = Product::select('product_discount', 'category_id')->where('id', $product_id)->first();
+        $productDetails = json_decode(json_encode($productDetails), true);
+
+        $categoryDiscount = Category::select('category_discount')->where('id', $productDetails['category_id'])->first();
+        $categoryDiscount = json_decode(json_encode($categoryDiscount), true);
+
+        if ($productDetails['product_discount'] > 0) {
+            $finalPrice = $productPrice['price'] - $productPrice['price'] / 100 * $productDetails['product_discount']; 
+            $discount = $productPrice['price'] - $finalPrice;
+        } else if($categoryDiscount['category_discount'] > 0) {
+            $finalPrice = $productPrice['price'] - $productPrice['price'] / 100 * $categoryDiscount['category_discount'];
+            $discount = $productPrice['price'] - $finalPrice;
+        } else {
+            $finalPrice = $productPrice['price'];
+            $discount = 0;
+        }
+
+        return array('product_price'=>$productPrice['price'], 'final_price'=>$finalPrice, 'discount'=>$discount);
     }
 
     public static function isNewProduct($product_id) {

@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductsFilter; 
 use App\Models\ProductsAttribute; 
+use App\Models\Vendor;
 
 class ProductsController extends Controller
 {
@@ -128,7 +129,36 @@ class ProductsController extends Controller
         
     }
 
-    public function detail(Request $request) {
-        return view('front.products.detail');
+    public function vendorListing($vendorid) {
+        //Get Vendor Shop Name
+        $getVendorShop = Vendor::getVendorShop($vendorid);
+
+        //Get Vendor Products
+        $vendorProducts = Product::with('brand')->where(['vendor_id'=>$vendorid, 'status'=>1]);
+
+        $vendorProducts = $vendorProducts->paginate(30);
+        //dd($vendorProducts);
+        return view('front.products.vendor_listing')->with(compact('getVendorShop', 'vendorProducts'));
+    }
+
+    public function detail($id) {
+        $productDetails = Product::with(['section', 'category', 'brand', 'attributes'=>function($query) { 
+            $query->where('stock', '>', 0)->where('status', 1);
+         }, 'vendor', 'images'])->find($id)->toArray();
+        $categoryDetails = Category::categoryDetails($productDetails['category']['url']);
+        //dd($productDetails);
+        $totalStock = ProductsAttribute::where('product_id', $id)->sum('stock');
+
+        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock'));
+    }
+
+    public function getProductPrice(Request $request) {
+        if ($request->ajax()) {
+            $data = $request->all();
+            //echo "<pre>"; print_r($data); die;
+            $getDiscountAttributePrice = Product::getDiscountAttributePrice($data['product_id'], $data['size']);
+
+            return $getDiscountAttributePrice;
+        }
     }
 }

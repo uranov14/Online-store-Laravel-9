@@ -1,10 +1,11 @@
 <?php 
 use App\Models\ProductsFilter; 
 $productFilters = ProductsFilter::productFilters();
-
+//dd($productFilters);
 if (isset($product['category_id'])) {
   $category_id = $product['category_id'];
 }
+
 ?>
 
 @foreach ($productFilters as $filter)
@@ -22,8 +23,7 @@ if (isset($product['category_id'])) {
           @foreach ($filter['filter_values'] as $value)
             <option 
               value="{{ $value['filter_value'] }}" 
-              @if (!empty($filter['filter_column']) 
-              && $value['filter_value'] == $product[$filter['filter_column']])
+              @if (!empty($filter['filter_column']))
                 selected
               @endif
             >

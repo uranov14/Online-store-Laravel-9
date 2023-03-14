@@ -1,3 +1,10 @@
+@php
+    use App\Models\Product;
+    use App\Models\ProductsFilter; 
+    $productFilters = ProductsFilter::productFilters();
+    //dd($productFilters);
+@endphp
+
 @extends('front.layout.layout')
 
 @section('content')
@@ -9,10 +16,10 @@
           <ul class="bread-crumb">
               <li class="has-separator">
                   <i class="ion ion-md-home"></i>
-                  <a href="index.html">Home</a>
+                  <a href="{{ url('/') }}">Home</a>
               </li>
               <li class="is-marked">
-                  <a href="single-product.html">Detail</a>
+                  <a href="javascript:;">Detail</a>
               </li>
           </ul>
       </div>
@@ -26,29 +33,21 @@
       <div class="row">
           <div class="col-lg-6 col-md-6 col-sm-12">
               <!-- Product-zoom-area -->
-              <div class="zoom-area">
-                  <img id="zoom-pro" class="img-fluid" src="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}" alt="Zoom Image">
-                  <div id="gallery" class="u-s-m-t-10">
-                      <a class="active" data-image="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}">
-                          <img src="{{ asset('front/images/product/product@2x.jpg') }}" alt="Product">
-                      </a>
-                      <a data-image="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}">
-                          <img src="{{ asset('front/images/product/product@2x.jpg') }}" alt="Product">
-                      </a>
-                      <a data-image="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}">
-                          <img src="{{ asset('front/images/product/product@2x.jpg') }}" alt="Product">
-                      </a>
-                      <a data-image="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}">
-                          <img src="{{ asset('front/images/product/product@2x.jpg') }}" alt="Product">
-                      </a>
-                      <a data-image="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}">
-                          <img src="{{ asset('front/images/product/product@2x.jpg') }}" alt="Product">
-                      </a>
-                      <a data-image="{{ asset('front/images/product/product@4x.jpg') }}" data-zoom-image="{{ asset('front/images/product/product@4x.jpg') }}">
-                          <img src="{{ asset('front/images/product/product@2x.jpg') }}" alt="Product">
-                      </a>
-                  </div>
+              <div class="easyzoom easyzoom--overlay easyzoom--with-thumbnails">
+                <a href="{{ asset('front/images/product_images/large/'.$productDetails['product_image']) }}">
+					<img src="{{ asset('front/images/product_images/large/'.$productDetails['product_image']) }}" alt="" width="500"/>
+				</a>
               </div>
+              <div class="thumbnails mt-2">
+                    <a href="{{ asset('front/images/product_images/large/'.$productDetails['product_image']) }}" data-standard="{{ asset('front/images/product_images/small/'.$productDetails['product_image']) }}">
+						<img width="80" height="100" src="{{ asset('front/images/product_images/small/'.$productDetails['product_image']) }}" alt="" />
+					</a>                   
+                    @foreach ($productDetails['images'] as $image)
+                        <a href="{{ asset('front/images/product_images/large/'.$image['image']) }}" data-standard="{{ asset('front/images/product_images/large/'.$image['image']) }}">
+                            <img width="80" height="100" src="{{ asset('front/images/product_images/small/'.$image['image']) }}" alt="" />
+                        </a>  
+                    @endforeach
+                </div>
               <!-- Product-zoom-area /- -->
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12">
@@ -57,22 +56,19 @@
                   <div class="section-1-title-breadcrumb-rating">
                       <div class="product-title">
                           <h1>
-                              <a href="single-product.html">Product Name</a>
+                              <a href="javascript:;">{{ $productDetails['product_name'] }}</a>
                           </h1>
                       </div>
                       <ul class="bread-crumb">
                           <li class="has-separator">
-                              <a href="index.html">Home</a>
+                              <a href="{{ url('/') }}">Home</a>
                           </li>
                           <li class="has-separator">
-                              <a href="shop-v1-root-category.html">Men Clothing </a>
+                            <a href="javascript:;">{{ $productDetails['section']['name'] }}</a>
                           </li>
-                          <li class="has-separator">
-                              <a href="listing.html">Tops</a>
-                          </li>
-                          <li class="is-marked">
-                              <a href="shop-v3-sub-sub-category.html">Hoodies</a>
-                          </li>
+                          @php
+                            echo $categoryDetails['breadcrumbs']
+                          @endphp
                       </ul>
                       <div class="product-rating">
                           <div class='star' title="4.5 out of 5 - based on 23 Reviews">
@@ -83,39 +79,70 @@
                   </div>
                   <div class="section-2-short-description u-s-p-y-14">
                       <h6 class="information-heading u-s-m-b-8">Description:</h6>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                      <p>
+                        {{ $productDetails['description'] }}
                       </p>
                   </div>
                   <div class="section-3-price-original-discount u-s-p-y-14">
-                      <div class="price">
-                          <h4>$100.00</h4>
-                      </div>
-                      <div class="original-price">
-                          <span>Original Price:</span>
-                          <span>$120.00</span>
-                      </div>
-                      <div class="discount-price">
-                          <span>Discount:</span>
-                          <span>15%</span>
-                      </div>
-                      <div class="total-save">
-                          <span>Save:</span>
-                          <span>$20</span>
-                      </div>
+                    @php
+                        $getDiscountPrice = Product::getDiscountPrice($productDetails['id']);
+                    @endphp
+                    <div class="getAttributePrice">
+                        @if ($productDetails['product_price'] > $getDiscountPrice)
+                        <div class="price">
+                            <h4>{{ $getDiscountPrice }}&nbsp;<span style="font-size: 1rem">&#x20b4;</span></h4>
+                        </div>
+                        <div class="original-price">
+                            <span>Original Price:</span>
+                            <span>{{ $productDetails['product_price'] }}</span>&nbsp;<span style="font-size: .7rem">&#x20b4;</span>
+                        </div>
+                        @else
+                        <div class="price">
+                            <h4>{{ $productDetails['product_price'] }}&nbsp;&#x20b4;</h4>
+                        </div>
+                        @endif
+                    </div>
+                    {{-- <div class="discount-price">
+                      <span>Discount:</span>
+                      <span>15%</span>
+                    </div>
+                    <div class="total-save">
+                      <span>Save:</span>
+                      <span>$20</span>
+                    </div> --}}
                   </div>
                   <div class="section-4-sku-information u-s-p-y-14">
-                      <h6 class="information-heading u-s-m-b-8">Sku Information:</h6>
-                      <div class="availability">
-                          <span>Availability:</span>
-                          <span>In Stock</span>
-                      </div>
-                      <div class="left">
-                          <span>Only:</span>
-                          <span>50 left</span>
-                      </div>
+                    <h6 class="information-heading u-s-m-b-8">Sku Information:</h6>
+                    <div class="left">
+                      <span>Product Code:</span>
+                      <span>{{ $productDetails['product_code'] }}</span>
+                    </div>
+                    <div class="left">
+                      <span>Product Color:</span>
+                      <span>{{ $productDetails['product_color'] }}</span>
+                    </div>
+                    <div class="availability">
+                      <span>Availability:</span>
+                      @if ($totalStock > 0)
+                      <span>In Stock</span>
+                      @else
+                      <span style="color: red;">Out of Stock</span>  
+                      @endif
+                    </div>
+                    @if ($totalStock > 0)
+                    <div class="left">
+                      <span>Only:</span>
+                      <span>{{ $totalStock }} left</span>
+                    </div>
+                    @endif
                   </div>
+                  @if (isset($productDetails['vendor']))
+                      <div>
+                        <h6>Sold by: <a href="/products/{{ $productDetails['vendor']['id'] }}" style="font-weight: bolder;">{{ $productDetails['vendor']['vendorbusinessdetails']['shop_name'] }}</a></h6>
+                      </div>
+                  @endif
                   <div class="section-5-product-variants u-s-p-y-14">
-                      <h6 class="information-heading u-s-m-b-8">Product Variants:</h6>
+                      {{-- <h6 class="information-heading u-s-m-b-8">Product Variants:</h6>
                       <div class="color u-s-m-b-11">
                           <span>Available Color:</span>
                           <div class="color-variant select-box-wrapper">
@@ -125,26 +152,17 @@
                                   <option value="5">White</option>
                               </select>
                           </div>
-                      </div>
+                      </div> --}}
                       <div class="sizes u-s-m-b-11">
                           <span>Available Size:</span>
                           <div class="size-variant select-box-wrapper">
-                              <select class="select-box product-size">
-                                  <option value="">Male 2XL</option>
-                                  <option value="">Male 3XL</option>
-                                  <option value="">Kids 4</option>
-                                  <option value="">Kids 6</option>
-                                  <option value="">Kids 8</option>
-                                  <option value="">Kids 10</option>
-                                  <option value="">Kids 12</option>
-                                  <option value="">Female Small</option>
-                                  <option value="">Male Small</option>
-                                  <option value="">Female Medium</option>
-                                  <option value="">Male Medium</option>
-                                  <option value="">Female Large</option>
-                                  <option value="">Male Large</option>
-                                  <option value="">Female XL</option>
-                                  <option value="">Male XL</option>
+                              <select name="size" id="getPrice" product_id="{{ $productDetails['id'] }}" class="select-box product-size">
+                                <option value="" style="display: none">Select Size</option>
+                                @foreach ($productDetails['attributes'] as $attribute)
+                                  <option value="{{ $attribute['size'] }}">
+                                    {{ $attribute['size'] }}
+                                  </option> 
+                                @endforeach    
                               </select>
                           </div>
                       </div>
@@ -184,9 +202,7 @@
                           <div class="quantity-wrapper u-s-m-b-22">
                               <span>Quantity:</span>
                               <div class="quantity">
-                                  <input type="text" class="quantity-text-field" value="1">
-                                  <a class="plus-a" data-max="1000">&#43;</a>
-                                  <a class="minus-a" data-min="1">&#45;</a>
+                                  <input type="number" name="quantity" class="quantity-text-field" value="1">
                               </div>
                           </div>
                           <div>
@@ -208,10 +224,10 @@
                   <div class="detail-nav-wrapper u-s-m-b-30">
                       <ul class="nav single-product-nav justify-content-center">
                           <li class="nav-item">
-                              <a class="nav-link active" data-toggle="tab" href="#description">Description</a>
+                              <a class="nav-link active" data-toggle="tab" href="#video">Product Video</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link" data-toggle="tab" href="#specification">Specifications</a>
+                              <a class="nav-link" data-toggle="tab" href="#detail">Product Details</a>
                           </li>
                           <li class="nav-item">
                               <a class="nav-link" data-toggle="tab" href="#review">Reviews (15)</a>
@@ -219,79 +235,48 @@
                       </ul>
                   </div>
                   <div class="tab-content">
-                      <!-- Description-Tab -->
-                      <div class="tab-pane fade active show" id="description">
+                      <!-- Product Video -->
+                      <div class="tab-pane fade active show" id="video">
                           <div class="description-whole-container">
-                              <p class="desc-p u-s-m-b-26">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                              </p>
-                              <img class="desc-img img-fluid u-s-m-b-26" src="{{ asset('front/images/product/product@3x.jpg') }}" alt="Product">
-                              <iframe class="desc-iframe u-s-m-b-45" width="710" height="400" src="{{ asset('front/images/product/iframe-youtube.jpg') }}" allowfullscreen></iframe>
+                              @if ($productDetails['product_video'])
+                              <video width="100%" controls>
+                                <source type="video/mp4" src="{{ asset('front/videos/product_videos/'.$productDetails['product_video']) }}">
+                              </video>
+                              @else
+                                <div style="width: 100%; height: 40vh; background-color:cyan;">
+                                  <h2 class="text-center pt-5">Product Video dosn't exists</h2>
+                                </div>
+                              @endif
                           </div>
                       </div>
-                      <!-- Description-Tab /- -->
-                      <!-- Specifications-Tab -->
-                      <div class="tab-pane fade" id="specification">
+                      <!-- Product Video /- -->
+                      <!-- Details-Tab -->
+                      <div class="tab-pane fade" id="detail">
                           <div class="specification-whole-container">
-                              <div class="spec-ul u-s-m-b-50">
-                                  <h4 class="spec-heading">Key Features</h4>
-                                  <ul>
-                                      <li>Heather Grey</li>
-                                      <li>Black</li>
-                                      <li>White</li>
-                                  </ul>
-                              </div>
-                              <div class="u-s-m-b-50">
-                                  <h4 class="spec-heading">What's in the Box?</h4>
-                                  <h3 class="spec-answer">1 x hoodie</h3>
-                              </div>
                               <div class="spec-table u-s-m-b-50">
-                                  <h4 class="spec-heading">General Information</h4>
+                                  <h4 class="spec-heading text-center mb-3">Product Information</h4>
                                   <table>
-                                      <tr>
-                                          <td>Sku</td>
-                                          <td>AY536FA08JT86NAFAMZ</td>
-                                      </tr>
-                                  </table>
-                              </div>
-                              <div class="spec-table u-s-m-b-50">
-                                  <h4 class="spec-heading">Product Information</h4>
-                                  <table>
-                                      <tr>
-                                          <td>Main Material</td>
-                                          <td>Cotton</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Color</td>
-                                          <td>Heather Grey, Black, White</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Sleeves</td>
-                                          <td>Long Sleeve</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Top Fit</td>
-                                          <td>Regular</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Print</td>
-                                          <td>Not Printed</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Neck</td>
-                                          <td>Round Neck</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Pieces Count</td>
-                                          <td>1 piece</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Occasion</td>
-                                          <td>Casual</td>
-                                      </tr>
-                                      <tr>
-                                          <td>Shipping Weight (kg)</td>
-                                          <td>0.5</td>
-                                      </tr>
+                                    @foreach ($productFilters as $filter)
+                                        @if (isset($productDetails['category_id']))
+                                        @php
+                                            $filterAvailable = ProductsFilter::filterAvailable($filter['id'], $productDetails['category_id']);
+                                            //dd($filterAvailable);
+                                        @endphp
+                                            @if ($filterAvailable == 'Yes')
+                                            <tr>
+                                                <td>{{ $filter['filter_name'] }}</td>
+                                                <td>
+                                                    @foreach ($filter['filter_values'] as $value)   
+                                                        @if (!empty($productDetails[$filter['filter_column']]) 
+                                                        && $value['filter_value'] == $productDetails[$filter['filter_column']])
+                                                            {{ $value['filter_value'] }}
+                                                        @endif    
+                                                    @endforeach
+                                                </td>
+                                            </tr>
+                                            @endif  
+                                        @endif
+                                    @endforeach 
                                   </table>
                               </div>
                           </div>

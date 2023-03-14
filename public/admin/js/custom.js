@@ -383,8 +383,9 @@ $(document).ready(function() {
             success: function(resp) {
                 $(".loadFilters").html(resp.view);            
             },error: function() {
-                alert('Error with category');
+                alert('Error with category filters');
             }
         })
     })
+
 })
