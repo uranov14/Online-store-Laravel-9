@@ -1,4 +1,4 @@
-@extends('admin.layout.layout')
+@extends('admin.layouts.layout')
 @php
   use App\Models\Category;
 @endphp
@@ -10,6 +10,12 @@
           <div class="card">
             <div class="card-body">
               <h4 class="card-title font-weight-bold">Filters</h4>
+              <a 
+                href="{{ url('admin/filters-values') }}" 
+                class="btn btn-primary"
+              >
+                View Filter Values
+              </a>
               <a 
                 href="{{ url('admin/add-edit-filter') }}" 
                 class="btn btn-primary btn-add"
@@ -92,20 +98,32 @@
                           @endif
                         </td>
                         <td>
-                          <a href="{{ url('admin/add-edit-filter-value') }}">
-                            <i class="mdi mdi-pencil-box"></i>
-                          </a>
-                          <a title="Add filter values" href="{{ url('admin/add-edit-filter-value') }}">
-                            <i class="mdi mdi-plus-box"></i>
-                          </a>
-                          <a 
-                            href="javascript:void(0)"
-                            class="confirmDelete"
-                            module="filter"
-                            moduleId="{{ $filter['id'] }}"
-                          >
-                            <i class="mdi mdi-file-excel-box"></i>
-                          </a>
+                          <div class="d-flex align-items-center">
+                            <a href="{{ url('admin/add-edit-filter/'.$filter['id']) }}">
+                              <i class="mdi mdi-pencil-box"></i>
+                            </a>
+                            <span>Edit</span>
+                            <br>
+                          </div>
+
+                          <div class="d-flex align-items-center">
+                            <a href="{{ url('admin/add-edit-filter-value') }}">
+                              <i class="mdi mdi-plus-box"></i>
+                            </a>
+                            <span>Add values</span>
+                          </div>
+                          
+                          <div class="d-flex align-items-center">
+                            <a 
+                              href="javascript:void(0)"
+                              class="confirmDelete"
+                              module="filter"
+                              moduleId="{{ $filter['id'] }}"
+                            >
+                              <i class="mdi mdi-file-excel-box"></i>
+                            </a>
+                            <span>Delete</span>
+                          </div>
                         </td>
                         </tr>  
                     @endforeach
@@ -119,12 +137,7 @@
     </div>
     <!-- content-wrapper ends -->
     <!-- partial:../../partials/_footer.html -->
-    <footer class="footer">
-      <div class="d-sm-flex justify-content-center justify-content-sm-between">
-        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
-        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
-      </div>
-    </footer>
+    @include('admin.layouts.footer')
     <!-- partial -->
   </div>
 @endsection

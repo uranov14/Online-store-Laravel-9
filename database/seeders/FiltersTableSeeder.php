@@ -18,14 +18,14 @@ class FiltersTableSeeder extends Seeder
         $filterRecords = [
             [
                 'id'=>1,
-                'cat_ids'=>'1,2,3,5,6,7',
+                'cat_ids'=>'1,2,3,9,10,11',
                 'filter_name'=>'Fabric',
                 'filter_column'=>'fabric',
                 'status'=>1
             ],
             [
                 'id'=>2,
-                'cat_ids'=>'4,8',
+                'cat_ids'=>'4,5,14',
                 'filter_name'=>'RAM',
                 'filter_column'=>'ram',
                 'status'=>1

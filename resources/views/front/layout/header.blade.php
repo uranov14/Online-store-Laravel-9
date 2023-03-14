@@ -92,10 +92,11 @@ $sections = Section::sections();
       <div class="container">
         <div class="row clearfix align-items-center">
           <div class="col-lg-3 col-md-9 col-sm-6">
-            <div class="brand-logo text-lg-center">
-              <a href="index.html">
-              <img src="{{ asset('front/images/main-logo/logo-sector.png') }}" alt="Logo-shop" class="app-brand-logo">
+            <div class="d-flex text-lg-center align-items-center">
+              <a href="#">
+                <img src="{{ asset('front/images/main-logo/glory_to_ukraine.png') }}" alt="Logo-shop">
               </a>
+              <span class="brand-span font-weight-bold">Ukrainian sector</span>
             </div>
           </div>
           <div class="col-lg-6 u-d-none-lg">

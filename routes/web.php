@@ -93,6 +93,7 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::post('update-filter-values-status', 'FilterController@updateFilterValueStatus');
         Route::match(['get', 'post'], 'add-edit-filter/{id?}', 'FilterController@addEditFilter');
         Route::match(['get', 'post'], 'add-edit-filter-value/{id?}', 'FilterController@addEditFilterValue');
+        Route::post('category-filters', 'FilterController@categoryFilters');
 
         //Images
         Route::match(['get', 'post'], 'add-images/{id}', 'ProductsController@addImages');
@@ -116,4 +117,22 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
     foreach ($categoriesUrls as $key => $url) {
         Route::match(['get', 'post'],'/'.$url, 'ProductsController@listing');
     } 
+
+    //Show Vendor Products
+    Route::get('/products/{vendorid}', 'ProductsController@vendorListing');
+
+    //Product Detail Page
+    Route::get('/product/{id}', 'ProductsController@detail');
+
+    //Get product price by change Available Size
+    Route::post('get-product-price', 'ProductsController@getProductPrice');
+
+    //Vendor Register/login
+    Route::get('vendor/login-register', 'VendorController@loginRegister');
+
+    //Vendor Register
+    Route::post('vendor/register', 'VendorController@vendorRegister');
+
+    //Confirm Vendor Account
+    Route::get('vendor/confirm/{code}', 'VendorController@confirmVendor');
 });

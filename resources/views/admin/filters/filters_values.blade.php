@@ -1,14 +1,14 @@
 @php
-    use App\Models\ProductsFiltersValue;
+    use App\Models\ProductsFilter;
 @endphp
 
-@extends('admin.layout.layout')
+@extends('admin.layouts.layout')
 
 @section('content')
 <div class="main-panel">
     <a 
         href="{{ url('admin/filters') }}" 
-        class="btn btn-back"
+        class="btn btn-dark btn-back"
     >
         Back to Filters
     </a>
@@ -58,64 +58,64 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach ($filters as $filter)
+                    @foreach ($filtersValues as $filter)
                     <tr>
+                      <td>
+                          {{ $filter['id'] }}
+                      </td>
+                      <td>
+                        {{ $filter['filter_id'] }}
+                      </td>
                         <td>
-                            {{ $filter['id'] }}
+                          @php
+                            $filterName = ProductsFilter::getFilterName($filter['filter_id']);
+                            echo $filterName;
+                          @endphp 
                         </td>
                         <td>
-                            {{ $filter['filter_id'] }}
+                          {{ $filter['filter_value'] }}
                         </td>
                         <td>
-                            @php
-                                $filterName = ProductsFiltersValue::getFilterName($filter['filter_id']);
-                                echo $filterName;
-                            @endphp 
+                          @if ($filter['status'] == 1)
+                          <a 
+                            class="updateFilterValueStatus" 
+                            id="filter-{{ $filter['id'] }}" 
+                            filter_id="{{ $filter['id'] }}" 
+                            href="javascript:void(0)"
+                          >
+                            <i class="mdi mdi-bookmark-check" status="Active"></i>
+                          </a>
+                          @else
+                          <a 
+                            class="updateFilterValueStatus" 
+                            id="filter-{{ $filter['id'] }}" 
+                            filter_id="{{ $filter['id'] }}" 
+                            href="javascript:void(0)"
+                          >
+                            <i class="mdi mdi-bookmark-outline" status="Inactive"></i>
+                          </a>
+                          @endif
                         </td>
                         <td>
-                            {{ $filter['filter_value'] }}
-                        </td>
-                        <td>
-                            @if ($filter['status'] == 1)
-                            <a 
-                              class="updateFilterValueStatus" 
-                              id="filter-{{ $filter['id'] }}" 
-                              filter_id="{{ $filter['id'] }}" 
-                              href="javascript:void(0)"
-                            >
-                              <i class="mdi mdi-bookmark-check" status="Active"></i>
-                            </a>
-                            @else
-                            <a 
-                              class="updateFilterValueStatus" 
-                              id="filter-{{ $filter['id'] }}" 
-                              filter_id="{{ $filter['id'] }}" 
-                              href="javascript:void(0)"
-                            >
-                              <i class="mdi mdi-bookmark-outline" status="Inactive"></i>
-                            </a>
-                            @endif
-                        </td>
-                        <td>
-                            <a href="{{ url('admin/add-edit-filter/'.$filter['id']) }}">
-                              <i class="mdi mdi-pencil-box"></i>
-                            </a>
-                            {{-- <a 
-                              title="Brand"
-                              record="filter-value"
-                              class="confirmDelete"
-                              href="{{ url('admin/delete-filter-value/'.$filter-value['id']) }}"
-                            >
-                              <i class="mdi mdi-file-excel-box"></i>
-                            </a> --}}
-                            <a 
-                              href="javascript:void(0)"
-                              class="confirmDelete"
-                              module="filter"
-                              moduleId="{{ $filter['id'] }}"
-                            >
-                              <i class="mdi mdi-file-excel-box"></i>
-                            </a>
+                          <a href="{{ url('admin/add-edit-filter-value/'.$filter['id']) }}">
+                            <i class="mdi mdi-pencil-box"></i>
+                          </a>
+                          {{-- <a 
+                            title="Brand"
+                            record="filter-value"
+                            class="confirmDelete"
+                            href="{{ url('admin/delete-filter-value/'.$filter-value['id']) }}"
+                          >
+                            <i class="mdi mdi-file-excel-box"></i>
+                          </a> --}}
+                          <a 
+                            href="javascript:void(0)"
+                            class="confirmDelete"
+                            module="filter"
+                            moduleId="{{ $filter['id'] }}"
+                          >
+                            <i class="mdi mdi-file-excel-box"></i>
+                          </a>
                         </td>
                       </tr>  
                     @endforeach
@@ -129,12 +129,7 @@
     </div>
     <!-- content-wrapper ends -->
     <!-- partial:../../partials/_footer.html -->
-    <footer class="footer">
-      <div class="d-sm-flex justify-content-center justify-content-sm-between">
-        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
-        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
-      </div>
-    </footer>
+    @include('admin.layouts.footer')
     <!-- partial -->
   </div>
 @endsection

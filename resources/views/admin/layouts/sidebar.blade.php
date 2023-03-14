@@ -26,6 +26,7 @@
                 <ul class="nav flex-column sub-menu notActiveNavItem">
                     <li class="nav-item">
                         <a 
+                            id="sec"
                             @if (Session::get('page') == "update_personal-details")
                             class="nav-link activeNavItem"
                             @else
@@ -38,6 +39,7 @@
                     </li>
                     <li class="nav-item">
                         <a
+                            id="sec"
                             @if (Session::get('page') == "update_business-details")
                             class="nav-link activeNavItem"
                             @else
@@ -50,6 +52,7 @@
                     </li>
                     <li class="nav-item">
                         <a 
+                            id="sec"
                             @if (Session::get('page') == "update_bank-details")
                             class="nav-link activeNavItem"
                             @else
@@ -62,7 +65,46 @@
                     </li>
                 </ul>
             </div>
-        </li>    
+        </li> 
+        <li class="nav-item">
+            <a 
+                class="nav-link @if(Session::get('page') == "sections" 
+                                || Session::get('page') == "categories" 
+                                || Session::get('page') == "brands" 
+                                || Session::get('page') == "products" 
+                                || Session::get('page') == "filters"
+                                || Session::get('page') == "filters_values"
+                                )
+                    activeNavItem
+                @endif" 
+                data-toggle="collapse" 
+                href="#ui-catalogue" 
+                aria-expanded="false" 
+                aria-controls="ui-catalogue"
+            >
+                {{-- <p>{{ Session::get('page') }}</p> --}}
+                <i class="icon-paper-stack menu-icon"></i>
+                <span class="menu-title">Catalogue<br> Management</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-catalogue">
+                <ul class="nav flex-column sub-menu notActiveNavItem">
+                    <li class="nav-item">
+                        <a 
+                            id="sec"
+                            @if (Session::get('page') == "products")
+                                class="nav-link activeNavItem"
+                            @else
+                                class="nav-link notActiveNavItem"
+                            @endif 
+                            href="{{ url('admin/products') }}" 
+                        >
+                            Products
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>   
         @else
         <li class="nav-item">
             <a 
@@ -187,6 +229,7 @@
                                 || Session::get('page') == "brands" 
                                 || Session::get('page') == "products" 
                                 || Session::get('page') == "filters"
+                                || Session::get('page') == "filters_values"
                                 )
                     activeNavItem
                 @endif" 
@@ -257,7 +300,7 @@
                     <li class="nav-item">
                         <a 
                             id="sec"
-                            @if (Session::get('page') == "filters")
+                            @if (Session::get('page') == "filters" || Session::get('page') == "filters_values")
                                 class="nav-link activeNavItem"
                             @else
                                 class="nav-link notActiveNavItem"

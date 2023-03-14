@@ -2523,14 +2523,12 @@ textarea.form-control {
 }
 
 .btn-back {
-  background-color: #000;
-  color: #fff;
   max-width: fit-content;
   transform: translate(3vw, 3vh);
 }
 
 .btn-back:hover {
-  color: gold !important;
+  box-shadow: 2px -2px 1px #0056b3;
 }
 
 .btn-add {

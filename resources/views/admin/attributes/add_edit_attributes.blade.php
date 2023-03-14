@@ -5,6 +5,9 @@
     <div class="content-wrapper">
       <div class="row">
         <div class="col-md-12 grid-margin">
+          <a href="{{ url('admin/products') }}" class="btn btn-dark" style="float: right">
+            Back to Products
+          </a>
           <div class="row">
             <div class="col-12 col-xl-8 mb-4 mb-xl-0">
               <h4 class="card-title">Attributes</h4>
