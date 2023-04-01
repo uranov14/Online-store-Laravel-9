@@ -116,7 +116,7 @@ $(document).ready(function() {
 						$("#register-"+i).html(error);
 						setTimeout(function() {
 							$("#register-"+i).css({'display': 'none'});
-						}, 3000);
+						}, 5000);
 					});
 				} else if(resp.type == "success") {
 					$(".loader").hide();
