@@ -135,4 +135,42 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
     //Confirm Vendor Account
     Route::get('vendor/confirm/{code}', 'VendorController@confirmVendor');
+
+    //Add to Cart Route
+    Route::post('cart/add', 'ProductsController@cartAdd');
+
+    //Cart Route
+    Route::get('cart', 'ProductsController@cart');
+
+    //Update Cart Item Quantity
+    Route::post('cart/update', 'ProductsController@cartUpdate');
+
+    //Delete Cart Item
+    Route::post('cart/delete', 'ProductsController@cartDelete');
+
+    //User Register/login
+    Route::get('user/login-register', ['as'=>'login', 'uses'=>'UserController@loginRegister']);
+
+    //User Register
+    Route::post('user/register', 'UserController@userRegister');
+
+    Route::group(['middleware'=>['auth']], function() {
+        //User Account
+        Route::match(['get', 'post'], 'user/account', 'UserController@userAccount');
+
+        //User Update Password
+        Route::post('user/update-password', 'UserController@userUpdatePassword');
+    });
+
+    //User Login
+    Route::post('user/login', 'UserController@userLogin');
+
+    //User Forgot Password
+    Route::match(['get', 'post'], 'user/forgot-password', 'UserController@forgotPassword');
+
+    //User logout
+    Route::get('user/logout', 'UserController@userLogout');
+
+    //Confirm User Account
+    Route::get('user/confirm/{code}', 'UserController@confirmAccount');
 });

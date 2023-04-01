@@ -216,6 +216,21 @@
                   >
                 </div>
                 <div class="form-group">
+                  <label for="product_weight">Group Code</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    @if (!empty($product['group_code']))
+                    value="{{ $product['group_code'] }}"
+                    @else
+                    value="{{ old('group_code') }}"    
+                    @endif 
+                    name="group_code" 
+                    id="group_code" 
+                    placeholder="Enter Group Code"
+                  >
+                </div>
+                <div class="form-group">
                   <label for="product_image">Product Image (Recommended Size: 1000&times;1000)</label>
                   <input 
                     type="file" 

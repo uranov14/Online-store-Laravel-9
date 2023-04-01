@@ -386,6 +386,12 @@ class AdminController extends Controller
             //Update admins table
             Admin::where('id', $data['admin_id'])->update(['status'=>$status]);
             $adminDetails = Admin::where('id', $data['admin_id'])->first()->toArray();
+
+            if ($adminDetails['type'] == "vendor") {
+                //Update vendor table
+                Vendor::where('id', $adminDetails['vendor_id'])->update(['status'=>$status]);
+            }
+            
             if ($adminDetails['type'] == "vendor" && $status == 1) {
                 //Send Approved Email
                 $email = $adminDetails['email'];

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -10,6 +11,10 @@ use App\Models\Product;
 use App\Models\ProductsFilter; 
 use App\Models\ProductsAttribute; 
 use App\Models\Vendor;
+use App\Models\Cart;
+use Session;
+use DB;
+use Auth;
 
 class ProductsController extends Controller
 {
@@ -147,9 +152,44 @@ class ProductsController extends Controller
          }, 'vendor', 'images'])->find($id)->toArray();
         $categoryDetails = Category::categoryDetails($productDetails['category']['url']);
         //dd($productDetails);
+
+        //Get Similar Products
+        $similarProducts = Product::with('brand')->where('category_id', $productDetails['category']['id'])->where('id', '!=', $id)->limit(6)->inRandomOrder()->get()->toArray();
+        //dd($similarProducts);
+        
+        //Set Session for Viewed Recently Products
+        if (empty(Session::get('session_id'))) {
+            $session_id = md5(uniqid(rand(), true));
+        } else {
+            $session_id = Session::get('session_id');
+        }
+
+        Session::put('session_id', $session_id);
+
+        //Insert product in table if not exists
+        $countRecentlyViewedProducts = DB::table('recently_viewed_products')->where(['product_id'=> $id, 'session_id'=>$session_id])->count();
+        if ($countRecentlyViewedProducts == 0) {
+            DB::table('recently_viewed_products')->insert(['product_id'=> $id, 'session_id'=>$session_id]);
+        }
+
+        //Get Recently Viewed Products Ids
+        $recentlyViewedProductsIds = DB::table('recently_viewed_products')->select('product_id')->where('product_id', '!=', $id)->where('session_id', $session_id)->inRandomOrder()->get()->take(4)->pluck('product_id');
+        //dd($recentlyViewedProductsIds);
+
+        //Get Recently Viewed Products
+        $recentlyViewedProducts = Product::with('brand')->whereIn('id', $recentlyViewedProductsIds)->get()->toArray();
+        //dd($recentlyViewedProducts);
+
+        //Get Group Products
+        $groupProducts = array();
+        if (!empty($productDetails['group_code'])) {
+            $groupProducts = Product::select('id', 'product_image')->where('id', '!=', $id)->where(['group_code'=> $productDetails['group_code'], 'status'=>1])->get()->toArray();
+            //dd($groupProducts);
+        }
+
         $totalStock = ProductsAttribute::where('product_id', $id)->sum('stock');
 
-        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock'));
+        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts'));
     }
 
     public function getProductPrice(Request $request) {
@@ -159,6 +199,121 @@ class ProductsController extends Controller
             $getDiscountAttributePrice = Product::getDiscountAttributePrice($data['product_id'], $data['size']);
 
             return $getDiscountAttributePrice;
+        }
+    }
+
+    public function cartAdd(Request $request) {
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+            //echo "<pre"; print_r($data); die;
+
+            //Check Product Stock is available or not
+            $getProductStock = ProductsAttribute::isStockAvailable($data['product_id'], $data['size']);
+
+            if ($getProductStock < $data['quantity']) {
+                return redirect()->back()->with('error_message', 'Required Quantity is not available!');
+            }
+
+            //Generate Session Id if not exists
+            $session_id = Session::get('session_id');
+            if (empty($session_id)) {
+                $session_id = Session::getId();
+                Session::put('session_id', $session_id);
+            }
+
+            //Check Product if already exists in the User Cart
+            if (Auth::check()) {
+                //User is Logged in
+                $user_id = Auth::user()->id;
+                $countProducts = Cart::where(['product_id'=>$data['product_id'], 'size'=>$data['size'], 'user_id'=>$user_id])->count();
+            } else {
+                //User is not Logged in
+                $user_id = 0;
+                $countProducts = Cart::where(['product_id'=>$data['product_id'], 'size'=>$data['size'], 'session_id'=>$session_id])->count();
+            }
+
+            if ($countProducts > 0) {
+                return redirect()->back()->with('error_message', 'Product already exists in Cart!');
+            }
+
+            //Save Product in cart table
+            $item = new Cart;
+            $item->session_id = $session_id;
+            $item->user_id = $user_id;
+            $item->product_id = $data['product_id'];
+            $item->size = $data['size'];
+            $item->quantity = $data['quantity'];
+            $item->save();
+
+            return redirect()->back()->with('success_message', 'Product has been added in Cart! <a style="text-decoration: underline;" href="/cart">View Cart</a>');
+        }
+    }
+
+    public function cart() {
+        $getCartItems = Cart::getCartItems();
+        //dd($getCartItems);
+        return view('front.products.cart')->with(compact('getCartItems'));
+    }
+
+    public function cartUpdate(Request $request) {
+        if ($request->ajax()) {
+            $data = $request->all();
+            //echo "<pre"; print_r($data); die;
+
+            //Get Cart Details
+            $cartDetails = Cart::find($data['cartid']);
+
+            //Get Available Product Stock
+            $availableStock = ProductsAttribute::select('stock')->where(['product_id'=>$cartDetails['product_id'], 'size'=>$cartDetails['size']])->first()->toArray();
+            //echo "<pre"; print_r($availableStock); die;
+
+            //Check if desired Stock from user is available
+            if ($data['qty'] > $availableStock['stock']) {
+                $getCartItems = Cart::getCartItems();
+                return response()->json([
+                    'status'=>false, 
+                    'message'=>'Product Stock is not available!',
+                    'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
+                ]);
+            }
+
+            //Check if product size is available
+            $availableSize = ProductsAttribute::where(['product_id'=>$cartDetails['product_id'], 'size'=>$cartDetails['size'], 'status'=>1])->count();
+            if ($availableSize == 0) {
+                $getCartItems = Cart::getCartItems();
+                return response()->json([
+                    'status'=>false, 
+                    'message'=>'Product Size is not available! Please remove this Product and choose another one!',
+                    'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
+                ]);
+            }
+
+            //Update carts table
+            Cart::where('id', $data['cartid'])->update(['quantity'=>$data['qty']]);
+            $getCartItems = Cart::getCartItems();
+            $totalCartItems = totalCartItems();
+            return response()->json([
+                'status'=>true, 
+                'totalCartItems'=>$totalCartItems,
+                'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
+            ]);
+        }
+        return view('front.products.cart')->with(compact('getCartItems'));
+    }
+
+    public function cartDelete(Request $request) {
+        if ($request->ajax()) {
+            $data = $request->all();
+            //echo "<pre"; print_r($data); die;
+
+            //Delete cart
+            Cart::where('id', $data['cartid'])->delete();
+            $getCartItems = Cart::getCartItems();
+            $totalCartItems = totalCartItems();
+            return response()->json([ 
+                'totalCartItems'=>$totalCartItems,
+                'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
+            ]);
         }
     }
 }
