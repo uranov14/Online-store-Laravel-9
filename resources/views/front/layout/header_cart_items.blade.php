@@ -15,21 +15,21 @@
         $total_price = 0; 
       ?>
       @foreach ($getCartItems as $item)
-      @php
-      $getDiscountAttributePrice = App\Models\Product::getDiscountAttributePrice($item['product_id'], $item['size']);
-      //echo "<pre>"; print_r($getDiscountAttributePrice); die;
-      @endphp
-      <li class="clearfix">
-        <a href="{{ url('product/'.$item['product_id']) }}">
-        <img src="{{ asset('front/images/product_images/small/'.$item['product']['product_image']) }}" alt="Product">
-        <span class="mini-item-name">{{ $item['product']['product_name'] }}</span>
-        <span class="mini-item-price">{{ $getDiscountAttributePrice['final_price'] }}&nbsp;<span style="font-size: .875rem; color:black;">&#x20b4;</span></span>
-        <span class="mini-item-quantity"> x {{ $item['quantity'] }} </span>
-        </a>
-      </li>
-      <?php 
-        $total_price += $getDiscountAttributePrice['final_price'] * $item['quantity']; 
-      ?>
+        @php
+        $getDiscountAttributePrice = App\Models\Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+        //echo "<pre>"; print_r($getDiscountAttributePrice); die;
+        @endphp
+        <li class="clearfix">
+          <a href="{{ url('product/'.$item['product_id']) }}">
+          <img src="{{ asset('front/images/product_images/small/'.$item['product']['product_image']) }}" alt="Product">
+          <span class="mini-item-name">{{ $item['product']['product_name'] }}</span>
+          <span class="mini-item-price">{{ $getDiscountAttributePrice['final_price'] }}&nbsp;<span style="font-size: .875rem; color:black;">&#x20b4;</span></span>
+          <span class="mini-item-quantity"> x {{ $item['quantity'] }} </span>
+          </a>
+        </li>
+        <?php 
+          $total_price += $getDiscountAttributePrice['final_price'] * $item['quantity']; 
+        ?>
       @endforeach
     </ul>
     <div class="mini-shop-total clearfix">
@@ -37,8 +37,8 @@
       <span class="mini-total-price float-right">{{ $total_price }} &#x20b4;</span>
     </div>
     <div class="mini-action-anchors">
-      <a href="cart.html" class="cart-anchor">View Cart</a>
-      <a href="checkout.html" class="checkout-anchor">Checkout</a>
+      <a href="{{ url('cart') }}" class="cart-anchor">View Cart</a>
+      <a href="{{ url('checkout') }}" class="checkout-anchor">Checkout</a>
     </div>
   </div>
 </div>

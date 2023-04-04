@@ -68,13 +68,7 @@
         </li> 
         <li class="nav-item">
             <a 
-                class="nav-link @if(Session::get('page') == "sections" 
-                                || Session::get('page') == "categories" 
-                                || Session::get('page') == "brands" 
-                                || Session::get('page') == "products" 
-                                || Session::get('page') == "filters"
-                                || Session::get('page') == "filters_values"
-                                )
+                class="nav-link @if(Session::get('page') == "products" || Session::get('page') == "coupons")
                     activeNavItem
                 @endif" 
                 data-toggle="collapse" 
@@ -100,6 +94,19 @@
                             href="{{ url('admin/products') }}" 
                         >
                             Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a 
+                            id="sec"
+                            @if (Session::get('page') == "coupons")
+                                class="nav-link activeNavItem"
+                            @else
+                                class="nav-link notActiveNavItem"
+                            @endif 
+                            href="{{ url('admin/coupons') }}" 
+                        >
+                            Coupons
                         </a>
                     </li>
                 </ul>
@@ -228,6 +235,7 @@
                                 || Session::get('page') == "categories" 
                                 || Session::get('page') == "brands" 
                                 || Session::get('page') == "products" 
+                                || Session::get('page') == "coupons"
                                 || Session::get('page') == "filters"
                                 || Session::get('page') == "filters_values"
                                 )
@@ -295,6 +303,19 @@
                             href="{{ url('admin/products') }}" 
                         >
                             Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a 
+                            id="sec"
+                            @if (Session::get('page') == "coupons")
+                                class="nav-link activeNavItem"
+                            @else
+                                class="nav-link notActiveNavItem"
+                            @endif 
+                            href="{{ url('admin/coupons') }}" 
+                        >
+                            Coupons
                         </a>
                     </li>
                     <li class="nav-item">

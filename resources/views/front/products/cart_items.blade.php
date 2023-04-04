@@ -1,6 +1,6 @@
 <!-- Products-List-Wrapper -->
 <div class="table-wrapper u-s-m-b-60">
-    <table>
+    <table>@csrf
         <thead>
             <tr>
                 <th>Product</th>
@@ -68,62 +68,8 @@
             </tr>
             <?php $total_price += $getDiscountAttributePrice['final_price'] * $item['quantity']; ?>
             @endforeach
+            <?php Session::put('total_price', $total_price); ?>
         </tbody>
     </table>
 </div>
 <!-- Products-List-Wrapper /- -->
-<!-- Coupon -->
-<div class="coupon-continue-checkout u-s-m-b-60">
-    <div class="coupon-area">
-        <h6>Enter your coupon code if you have one.</h6>
-        <div class="coupon-field">
-            <label class="sr-only" for="coupon-code">Apply Coupon</label>
-            <input id="coupon-code" type="text" class="text-field" placeholder="Coupon Code">
-            <button type="submit" class="button">Apply Coupon</button>
-        </div>
-    </div>
-    <div class="button-area">
-        <a href="shop-v1-root-category.html" class="continue">Continue Shopping</a>
-        <a href="checkout.html" class="checkout">Proceed to Checkout</a>
-    </div>
-</div>
-<!-- Coupon /- -->
-<!-- Billing -->
-<div class="calculation u-s-m-b-60">
-    <div class="table-wrapper-2">
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="2">Cart Totals</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <h3 class="calc-h3 u-s-m-b-0">Subtotal</h3>
-                    </td>
-                    <td>
-                        <span class="calc-text">{{ $total_price }} <strong style="font-size: .675rem;">&#x20b4;</strong></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h3 class="calc-h3 u-s-m-b-0">Coupon Discount</h3>
-                    </td>
-                    <td>
-                        <span class="calc-text">0 <strong style="font-size: .675rem;">&#x20b4;</strong></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h3 class="calc-h3 u-s-m-b-0">Total</h3>
-                    </td>
-                    <td>
-                        <span class="calc-text">{{ $total_price }} <strong style="font-size: .675rem;">&#x20b4;</strong></span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<!-- Billing /- -->

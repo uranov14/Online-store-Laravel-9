@@ -36,7 +36,7 @@ $totalCartItems = totalCartItems();
               </a>
               <ul class="g-dropdown" style="width:200px">
                 <li>
-                  <a href="cart.html">
+                  <a href="{{ url('cart') }}">
                   <i class="fas fa-cog u-s-m-r-9"></i>
                   My Cart</a>
                 </li>

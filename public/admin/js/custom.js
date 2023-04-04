@@ -6,6 +6,8 @@ $(document).ready(function() {
     $('#products').DataTable();
     $('#banners').DataTable();
     $('#filters').DataTable();
+    $('#coupons').DataTable();
+    $('#users').DataTable();
 
     //Check Admin Password is correct or not
     $("#current_password").keyup(function() {
@@ -160,6 +162,32 @@ $(document).ready(function() {
         })
     })
 
+    //Update User Status
+    $(document).on("click", ".updateUserStatus", function() {
+        var status = $(this).children("i").attr("status");
+        var user_id = $(this).attr("user_id");
+        //alert(user_id);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'post',
+            url: '/admin/update-user-status',
+            data: {status: status, user_id: user_id},
+            success: function(resp) {
+                //alert(resp);
+                if (resp['status'] == 0) {
+                    $("#user-"+user_id).html("<i class='mdi mdi-bookmark-outline' status='Inactive'></i>")
+                }else {
+                    $("#user-"+user_id).html("<i class='mdi mdi-bookmark-check' status='Active'></i>")
+                }
+            },error: function() {
+                alert('Error with status');
+            }
+        })
+    })
+
     //Update Product Status
     $(document).on("click", ".updateProductStatus", function() {
         var status = $(this).children("i").attr("status");
@@ -184,6 +212,32 @@ $(document).ready(function() {
             }
         })
     })
+
+    //Update Coupon Status
+    $(document).on("click", ".updateCouponStatus", function() {
+        var status = $(this).children("i").attr("status");
+        var coupon_id = $(this).attr("coupon_id");
+        //alert(coupon_id);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'post',
+            url: '/admin/update-coupon-status',
+            data: {status: status, coupon_id: coupon_id},
+            success: function(resp) {
+                if (resp['status'] == 0) {
+                    $("#coupon-"+coupon_id).html("<i class='mdi mdi-bookmark-outline' status=0></i>")
+                }else {
+                    $("#coupon-"+coupon_id).html("<i class='mdi mdi-bookmark-check' status=1></i>")
+                }
+            },error: function() {
+                alert('Error with status coupon');
+            }
+        })
+    })
+
 
     //Update Filter Status
     $(document).on("click", ".updateFilterStatus", function() {
@@ -388,4 +442,12 @@ $(document).ready(function() {
         })
     })
 
+    // Show/Hide Coupon Field for Manual/Automatic
+    $("#ManualCoupon").click(function () {
+        $("#couponField").show();
+    })
+
+    $("#AutomaticCoupon").click(function () {
+        $("#couponField").hide();
+    })
 })

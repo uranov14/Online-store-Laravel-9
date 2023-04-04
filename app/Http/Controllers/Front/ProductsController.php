@@ -12,6 +12,10 @@ use App\Models\ProductsFilter;
 use App\Models\ProductsAttribute; 
 use App\Models\Vendor;
 use App\Models\Cart;
+use App\Models\Coupon;
+use App\Models\User;
+use App\Models\DeliveryAddress;
+use App\Models\Country;
 use Session;
 use DB;
 use Auth;
@@ -67,24 +71,25 @@ class ProductsController extends Controller
                 }
 
                 //checking for Price
-                if (isset($data['price']) && !empty($data['price'])) {
-                    //echo "<pre>"; print_r($data['price']); die;
-                    
+                /* if (isset($data['price']) && !empty($data['price'])) {                    
                     foreach ($data['price'] as $key => $price) {
                         $priceArr = explode('-', $price);
                         $productIds[] = Product::select('id')->whereBetween('product_price', [$priceArr[0], $priceArr[1]])->pluck('id')->toArray();
-                    }
-                    
+                    }                    
                     $productIds = call_user_func_array('array_merge', $productIds);
-                    //echo "<pre>"; print_r($productIds); die;
                     $categoryProducts->whereIn('products.id', $productIds);
-                    /* $implodePrices = implode('-', $data['price']);
-                    $explodePrices = explode('-', $implodePrices);
-                    $min = reset($explodePrices);
-                    $max = end($explodePrices);
+                } */
 
-                    $productIds = Product::select('id')->whereBetween('product_price', [$min, $max])->pluck('id')->toArray();
-                    $categoryProducts->whereIn('products.id', $productIds); */
+                $productIds = array();
+                if (isset($data['price']) && !empty($data['price'])) {                    
+                    foreach ($data['price'] as $key => $price) {
+                        $priceArr = explode('-', $price);
+                        if (isset($priceArr[0]) && isset($priceArr[1])) {
+                            $productIds[] = Product::select('id')->whereBetween('product_price', [$priceArr[0], $priceArr[1]])->pluck('id')->toArray();
+                        }
+                    }                    
+                    $productIds = array_unique(array_flatten($productIds));
+                    $categoryProducts->whereIn('products.id', $productIds);
                 }
 
                 //checking for Brand
@@ -205,7 +210,7 @@ class ProductsController extends Controller
     public function cartAdd(Request $request) {
         if ($request->isMethod('post')) {
             $data = $request->all();
-            //echo "<pre"; print_r($data); die;
+            //echo "<pre>"; print_r($data); die;
 
             //Check Product Stock is available or not
             $getProductStock = ProductsAttribute::isStockAvailable($data['product_id'], $data['size']);
@@ -258,14 +263,14 @@ class ProductsController extends Controller
     public function cartUpdate(Request $request) {
         if ($request->ajax()) {
             $data = $request->all();
-            //echo "<pre"; print_r($data); die;
+            //echo "<pre>"; print_r($data); die;
 
             //Get Cart Details
             $cartDetails = Cart::find($data['cartid']);
 
             //Get Available Product Stock
             $availableStock = ProductsAttribute::select('stock')->where(['product_id'=>$cartDetails['product_id'], 'size'=>$cartDetails['size']])->first()->toArray();
-            //echo "<pre"; print_r($availableStock); die;
+            //echo "<pre>"; print_r($availableStock); die;
 
             //Check if desired Stock from user is available
             if ($data['qty'] > $availableStock['stock']) {
@@ -288,10 +293,12 @@ class ProductsController extends Controller
                 ]);
             }
 
-            //Update carts table
+            //Update quantity in carts table
             Cart::where('id', $data['cartid'])->update(['quantity'=>$data['qty']]);
             $getCartItems = Cart::getCartItems();
             $totalCartItems = totalCartItems();
+            Session::forget('couponCode');
+            Session::forget('couponAmount');
             return response()->json([
                 'status'=>true, 
                 'totalCartItems'=>$totalCartItems,
@@ -304,7 +311,9 @@ class ProductsController extends Controller
     public function cartDelete(Request $request) {
         if ($request->ajax()) {
             $data = $request->all();
-            //echo "<pre"; print_r($data); die;
+            //echo "<pre>"; print_r($data); die;
+            Session::forget('couponCode');
+            Session::forget('couponAmount');
 
             //Delete cart
             Cart::where('id', $data['cartid'])->delete();
@@ -315,5 +324,127 @@ class ProductsController extends Controller
                 'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
             ]);
         }
+    }
+
+    public function applyCoupon(Request $request) {
+        if ($request->ajax()) {
+            $data = $request->all();
+            Session::forget('couponCode');
+            Session::forget('couponAmount');
+            
+            $getCartItems = Cart::getCartItems();  
+            //echo "<pre>"; print_r($getCartItems); die;        
+            $totalCartItems = totalCartItems();
+            $couponCount = Coupon::where('coupon_code', $data['code'])->count();
+            if ($couponCount == 0) {
+                return response()->json([ 
+                    'status'=>false,
+                    'totalCartItems'=>$totalCartItems,
+                    'message'=>'The coupon is not valid!',
+                    'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                    'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                ]);
+            } else {
+                //Check for other coupon conditions
+                //Get Coupon Details
+                $couponDetails = Coupon::where('coupon_code', $data['code'])->first();
+                //Check if Coupon is active
+                if ($couponDetails->status == 0) {
+                    $message = "The coupon is not active!";
+                } else if ($couponDetails->expiry_date < date('Y-m-d')) {
+                    //Check if Coupon is expired
+                    $message = "The coupon is expired!";
+                } 
+
+                //Get all selected categories from coupon and convert to array
+                $catArr = explode(",", $couponDetails->categories);
+                //echo "<pre>"; print_r($getCartItems); die;
+                //Check if Coupon is from selected categories
+                $total_amount = 0;
+                foreach ($getCartItems as $key => $item) {
+                    if (!in_array($item['product']['category_id'], $catArr)) {
+                        $message = "This coupon code is not for one of the selected products!";
+                    }
+                    $attrPrice = Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+                    $total_amount += $attrPrice['final_price'] * $item['quantity'];
+                }
+
+                //Get all selected users from coupon and convert to array
+                if (isset($couponDetails->users) && !empty($couponDetails->users)) {
+                    $usersArr = explode(",", $couponDetails->users);
+
+                    if (count($usersArr) > 0) {
+                        //Get User Id's of all selected users
+                        foreach ($usersArr as $key => $user) {
+                            $getUserId = User::select('id')->where('email', $user)->first()->toArray();
+                            $usersId[] = $getUserId['id'];
+                        }
+
+                        //Check if any cart item not belong to Coupon user
+                        foreach ($getCartItems as $item) {
+                            if (!in_array($item['user_id'], $usersId)) {
+                                $message = "This coupon code is not for you! Try with valid coupon code!";
+                            }                       
+                        }
+                    }
+                }
+
+                //Check if coupon belong to Vendor
+                if ($couponDetails->vendor_id > 0) {
+                    $productIds = Product::select('id')->where('vendor_id', $couponDetails->vendor_id)->pluck('id')->toArray();
+                    //echo "<pre>"; print_r($productIds); die;
+                    foreach ($getCartItems as $item) {
+                        if (!in_array($item['product']['id'], $productIds)) {
+                            $message = "This coupon code is not for you! Try with valid coupon code (Vendor validation)!";
+                        }
+                    }
+                }
+                    
+                if (isset($message)) {
+                    return response()->json([ 
+                        'status'=>false,
+                        'totalCartItems'=>$totalCartItems,
+                        'message'=>$message,
+                        'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                        'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                    ]);
+                } else {
+                    //Coupon code is correct
+                    //Check if Coupon Amount type is Fixed or Percentage
+                    if ($couponDetails->amount_type == "Fixed") {
+                        $couponAmount = $couponDetails->amount;
+                    } else {
+                        $couponAmount = $total_amount * ($couponDetails->amount / 100);
+                    }
+                    $grand_total = $total_amount - $couponAmount;
+
+                    //Add Coupon Code & Amount in Session variables
+                    Session::put('couponCode', $data['code']);
+                    Session::put('couponAmount', $couponAmount);
+
+                    $message = "Coupon Code successfully applied! You are availing discount!";
+
+                    return response()->json([ 
+                        'status'=>true,
+                        'totalCartItems'=>$totalCartItems,
+                        'couponAmount'=>$couponAmount,
+                        'grand_total'=>$grand_total,
+                        'message'=>$message,
+                        'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                        'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                    ]);
+                }
+                
+            }
+        }
+    }
+
+    public function checkout(Request $request) {
+        $deliveryAddress = DeliveryAddress::deliveryAddress();
+        //dd($deliveryAddress);
+        $countries = Country::where('status', 1)->get()->toArray();
+        $getCartItems = Cart::getCartItems();
+        //dd($getCartItems);
+        return view('front.products.checkout')->with(compact('deliveryAddress', 'countries', 'getCartItems'));
     }
 }

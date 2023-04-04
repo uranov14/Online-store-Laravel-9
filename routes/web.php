@@ -105,6 +105,16 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::post('update-banner-status', 'BannersController@updateBannerStatus');
         Route::get('delete-banner/{id}', 'BannersController@deleteBanner');
         Route::match(['get', 'post'], 'add-edit-banner/{id?}', 'BannersController@addEditBanner');
+
+        //Coupons
+        Route::get('coupons', 'CouponsController@coupons');
+        Route::post('update-coupon-status', 'CouponsController@updateCouponStatus');
+        Route::get('delete-coupon/{id}', 'CouponsController@deleteCoupon');
+        Route::match(['get', 'post'], 'add-edit-coupon/{id?}', 'CouponsController@addEditCoupon');
+
+        //Users
+        Route::get('users', 'UserController@users');
+        Route::post('update-user-status', 'UserController@updateUserStatus');
     });
 }); 
 
@@ -160,6 +170,21 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
         //User Update Password
         Route::post('user/update-password', 'UserController@userUpdatePassword');
+
+        //Apply Coupon
+        Route::post('apply-coupon', 'ProductsController@applyCoupon');
+
+        //Checkout
+        Route::match(['get', 'post'], 'checkout', 'ProductsController@checkout');
+
+        //Get Delivery Address
+        Route::post('get-delivery-address', 'AddressController@getDeliveryAddress');
+
+        //Save Delivery Address
+        Route::post('save-delivery-address', 'AddressController@saveDeliveryAddress');
+
+        //Remove Delivery Address
+        Route::post('remove-delivery-address', 'AddressController@removeDeliveryAddress');
     });
 
     //User Login

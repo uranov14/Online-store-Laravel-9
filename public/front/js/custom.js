@@ -69,7 +69,7 @@ $(document).ready(function() {
 				}
 				$("#appendCartItems").html(resp.view);
 			},error:function(){
-				alert("Error");
+				alert("Error with update Cart Items Qty");
 			}
 		});
 	});
@@ -281,6 +281,123 @@ $(document).ready(function() {
 				alert("Error with Form Forgot Password");
 			}
 		});
+	});
+
+	//Apply Coupon
+	$("#applyCoupon").submit(function() {
+		var user = $(this).attr("user");
+		if(user == '1') {
+			//do nothing
+		} else {
+			alert("Please login to apply Coupon!");
+			return false;
+		}
+		var code = $("#code").val();
+		$.ajax({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			url:'/apply-coupon',
+			type:'post',
+			data:{code: code},
+			success:function(resp){
+				if (resp.message != "") {
+					alert(resp.message);
+				}
+				$(".totalCartItems").html(resp.totalCartItems);
+				$("#appendCartItems").html(resp.view);
+				$("#appendHeaderCartItems").html(resp.headerView);
+				if (resp.couponAmount > 0) {
+					$(".couponAmount").html(resp.couponAmount);
+				} else{
+					$(".couponAmount").html("0");
+				}
+				if (resp.grand_total > 0) {
+					$(".grand_total").html(resp.grand_total);
+				}
+			},error:function(){
+				alert("Error with Apply Coupon");
+			}
+		});
+	});
+
+	//Edit Delivery Address
+	$(document).on('click','.editAddress',function() {
+		var addressid = $(this).data('addressid');
+		//alert(addressid);
+		$.ajax({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			data: {addressid: addressid},
+			url: '/get-delivery-address',
+			type:'post',
+			success:function(resp){
+				$("#showdifferent").removeClass("collapse");
+				$(".newAddress").hide();
+				$(".deliveryText").text("Edit Delivery Address");
+				$("[name=delivery_id]").val(resp.address['id']);
+				$("#delivery_name").val(resp.address['name']);
+				$("#delivery_address").val(resp.address['address']);
+				$("#delivery_city").val(resp.address['city']);
+				$("#delivery_state").val(resp.address['state']);
+				$("#delivery_country").val(resp.address['country']);
+				$("#delivery_pincode").val(resp.address['pincode']);
+				$("#delivery_mobile").val(resp.address['mobile']);
+			},error:function(){
+				alert("Error with Edit Delivery Address");
+			}
+		});
+	});
+
+	//Save Delivery Address
+	$(document).on('submit','#addressAddEditForm',function() {
+		var formdata = $("#addressAddEditForm").serialize();
+
+		$.ajax({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			url:'/save-delivery-address',
+			type:'post',
+			data:formdata,
+			success:function(resp){
+				if(resp.type == "error") {
+					$(".loader").hide();
+					$.each(resp.errors, function(i, error) {
+						$("#delivery-"+i).attr('style', 'color:red');
+						$("#delivery-"+i).html(error);
+						setTimeout(function() {
+							$("#delivery-"+i).css({'display': 'none'});
+						}, 5000);
+					});
+				} else{
+					$("#deliveryAddresses").html(resp.view);
+				}
+			},error:function(){
+				alert("Error with Save Delivery Address");
+			}
+		});
+	});
+
+	//Remove Delivery Address
+	$(document).on('click','.removeAddress',function() {
+		if (confirm("Are you sure to remove this?")) {
+			var addressid = $(this).data('addressid');
+			$.ajax({
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				data: {addressid: addressid},
+				url: '/remove-delivery-address',
+				type:'post',
+				success:function(resp){
+					$("#deliveryAddresses").html(resp.view);
+				},error:function(){
+					alert("Error with Remove Delivery Address");
+				}
+			});
+		}
 	});
 })
 

@@ -27,6 +27,79 @@
             <div id="appendCartItems">
               @include('front.products.cart_items')
             </div>
+            <!-- Coupon -->
+            <!-- Billing -->
+            <div class="d-flex u-s-m-b-60">
+                <div class="coupon-area pt-4 col-lg-6">
+                    <h6>Enter your coupon code if you have one.</h6>
+                    <div class="coupon-field">
+                        <form 
+                            id="applyCoupon" 
+                            method="post" 
+                            action="javascript:;"
+                            @if (Auth::check())
+                                user='1'
+                            @endif
+                        >
+                        @csrf
+                            <label class="sr-only" for="code">Apply Coupon</label>
+                            <input id="code" name="code" type="text" class="text-field" placeholder="Enter Coupon Code">
+                            <button type="submit" class="button">Apply Coupon</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="table-wrapper-2 col-lg-6">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="2">Cart Totals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h6 class="calc-h3 u-s-m-b-0">Subtotal</h6>
+                                </td>
+                                <td>
+                                    <span class="calc-text">{{ Session::get('total_price') }} <strong style="font-size: .675rem;">&#x20b4;</strong></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h6 class="calc-h3 u-s-m-b-0">Coupon Discount</h6>
+                                </td>
+                                <td>
+                                    <span class="calc-text couponAmount">
+                                        @if (Session::has('couponAmount'))
+                                            {{ Session::get('couponAmount') }}
+                                        @else
+                                            0
+                                        @endif
+                                    </span>
+                                    &nbsp;
+                                    <strong style="font-size: .675rem;">&#x20b4;</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h6 class="calc-h3 u-s-m-b-0">Total</h6>
+                                </td>
+                                <td>
+                                    <span class="calc-text grand_total">{{ Session::get('total_price') - Session::get('couponAmount') }}</span>&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Billing /- -->
+            <div class="coupon-continue-checkout u-s-m-b-60">
+              <div class="button-area">
+                  <a href="{{ url('/') }}" class="continue">Continue Shopping</a>
+                  <a href="{{ url('/checkout') }}" class="checkout">Proceed to Checkout</a>
+              </div>
+            </div>
+            <!-- Coupon /- -->
           </div>
       </div>
   </div>
