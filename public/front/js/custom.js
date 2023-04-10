@@ -337,13 +337,13 @@ $(document).ready(function() {
 				$(".newAddress").hide();
 				$(".deliveryText").text("Edit Delivery Address");
 				$("[name=delivery_id]").val(resp.address['id']);
-				$("#delivery_name").val(resp.address['name']);
-				$("#delivery_address").val(resp.address['address']);
-				$("#delivery_city").val(resp.address['city']);
-				$("#delivery_state").val(resp.address['state']);
-				$("#delivery_country").val(resp.address['country']);
-				$("#delivery_pincode").val(resp.address['pincode']);
-				$("#delivery_mobile").val(resp.address['mobile']);
+				$("[name=delivery_name]").val(resp.address['name']);
+				$("[name=delivery_address").val(resp.address['address']);
+				$("[name=delivery_city]").val(resp.address['city']);
+				$("[name=delivery_state]").val(resp.address['state']);
+				$("[name=delivery_country]").val(resp.address['country']);
+				$("[name=delivery_pincode]").val(resp.address['pincode']);
+				$("[name=delivery_mobile]").val(resp.address['mobile']);
 			},error:function(){
 				alert("Error with Edit Delivery Address");
 			}
@@ -352,8 +352,8 @@ $(document).ready(function() {
 
 	//Save Delivery Address
 	$(document).on('submit','#addressAddEditForm',function() {
-		var formdata = $("#addressAddEditForm").serialize();
-
+		var formdata = $("#addressAddEditForm").serialize(); 
+		
 		$.ajax({
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -373,6 +373,7 @@ $(document).ready(function() {
 					});
 				} else{
 					$("#deliveryAddresses").html(resp.view);
+					window.location.href = "checkout";
 				}
 			},error:function(){
 				alert("Error with Save Delivery Address");
@@ -393,12 +394,14 @@ $(document).ready(function() {
 				type:'post',
 				success:function(resp){
 					$("#deliveryAddresses").html(resp.view);
+					window.location.href = "checkout";
 				},error:function(){
 					alert("Error with Remove Delivery Address");
 				}
 			});
 		}
 	});
+
 })
 
 function get_filter(class_name) {

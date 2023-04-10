@@ -16,6 +16,8 @@ class Sms extends Model
         $param['sender_id'] = '61472';
         $param['message']= $message;
         $param['numbers']= $mobile;
+        $param['username']= "Yuriy";
+        $param['password']= "123456";
         $param['language']="english";
         $param['route']="p";
 

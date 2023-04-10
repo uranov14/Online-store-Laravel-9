@@ -1,8 +1,15 @@
 <?php
 use App\Models\Section;
+use App\Models\Product;
 $sections = Section::sections();
 /* echo "<pre>"; print_r($sections); die; */
 $totalCartItems = totalCartItems();
+$getCartItems = getCartItems ();
+$total_sum = 0;
+foreach ($getCartItems as $item) {
+  $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+  $total_sum += $getDiscountAttributePrice['final_price'] * $item['quantity'];;
+}
 ?>
 
 <header>
@@ -55,6 +62,11 @@ $totalCartItems = totalCartItems();
                     <a href="{{ url('user/account') }}">
                     <i class="fas fa-sign-in-alt u-s-m-r-9"></i>
                     My Account</a>
+                  </li>
+                  <li>
+                    <a href="{{ url('user/orders') }}">
+                    <i class="fas fa-sign-in-alt u-s-m-r-9"></i>
+                    My Orders</a>
                   </li>
                   <li>
                     <a href="{{ url('user/logout') }}">
@@ -110,11 +122,14 @@ $totalCartItems = totalCartItems();
       <div class="container">
         <div class="row clearfix align-items-center">
           <div class="col-lg-3 col-md-9 col-sm-6">
-            <div class="d-flex text-lg-center align-items-center">
+            <div class="d-flex">
               <a href="#">
                 <img src="{{ asset('front/images/main-logo/glory_to_ukraine.png') }}" alt="Logo-shop">
               </a>
-              <span class="brand-span font-weight-bold">Ukrainian sector</span>
+              <div>
+                <h6 class="brand-span font-weight-bold mb-0 mt-1">Ukrainian</h6>
+                <h6 class="brand-span font-weight-bold mb-0 pl-3 ml-5">sector</h6>
+              </div>
             </div>
           </div>
           <div class="col-lg-6 u-d-none-lg">
@@ -154,7 +169,7 @@ $totalCartItems = totalCartItems();
                   <a href="javascript:;" id="mini-cart-trigger">
                   <i class="ion ion-md-basket"></i>
                   <span class="item-counter totalCartItems">{{ $totalCartItems }}</span>
-                  <span class="item-price">$220.00</span>
+                  <span class="item-price">{{ $total_sum - Session::get('couponAmount') }}</span>
                   </a>
                 </li>
               </ul>

@@ -1704,6 +1704,7 @@ body {
   vertical-align: top; }
 
 .brand-span {
+  line-height: 1;
   margin-left: .5rem;
   color: #0054db;
   text-shadow: -2px 2px 2px rgb(238, 195, 4);

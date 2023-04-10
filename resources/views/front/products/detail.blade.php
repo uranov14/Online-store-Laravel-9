@@ -58,16 +58,16 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              @endif
+            @endif
               
-              @if (Session::has('success_message'))
+            @if (Session::has('success_message'))
               <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Success: </strong><?php echo Session::get('success_message') ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              @endif
+            @endif
               <!-- Product-details -->
               <div class="all-information-wrapper">
                   <div class="section-1-title-breadcrumb-rating">

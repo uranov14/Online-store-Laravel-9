@@ -86,4 +86,9 @@ class Product extends Model
 
         return $isNewProd;
     }
+
+    public static function getProductImage($product_id) {
+        $getProductImage = Product::select('product_image')->where('id', $product_id)->first()->toArray();
+        return $getProductImage['product_image'];
+    }
 }

@@ -16,7 +16,7 @@
       ?>
       @foreach ($getCartItems as $item)
         @php
-        $getDiscountAttributePrice = App\Models\Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+        $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], $item['size']);
         //echo "<pre>"; print_r($getDiscountAttributePrice); die;
         @endphp
         <li class="clearfix">
@@ -34,7 +34,7 @@
     </ul>
     <div class="mini-shop-total clearfix">
       <span class="mini-total-heading float-left">Total:</span>
-      <span class="mini-total-price float-right">{{ $total_price }} &#x20b4;</span>
+      <span class="mini-total-price float-right">{{ $total_price - Session::get('couponAmount') }} &#x20b4;</span>
     </div>
     <div class="mini-action-anchors">
       <a href="{{ url('cart') }}" class="cart-anchor">View Cart</a>

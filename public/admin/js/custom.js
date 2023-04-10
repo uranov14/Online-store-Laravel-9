@@ -8,6 +8,7 @@ $(document).ready(function() {
     $('#filters').DataTable();
     $('#coupons').DataTable();
     $('#users').DataTable();
+    $('#orders').DataTable();
 
     //Check Admin Password is correct or not
     $("#current_password").keyup(function() {
