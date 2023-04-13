@@ -352,13 +352,22 @@ class ProductsController extends Controller
                 //Check for other coupon conditions
                 //Get Coupon Details
                 $couponDetails = Coupon::where('coupon_code', $data['code'])->first();
-                //Check if Coupon is active
+                //Check if Coupon is active and is expired
                 if ($couponDetails->status == 0) {
                     $message = "The coupon is not active!";
                 } else if ($couponDetails->expiry_date < date('Y-m-d')) {
                     //Check if Coupon is expired
                     $message = "The coupon is expired!";
                 } 
+
+                //Check if Coupon is for single time
+                if ($couponDetails->coupon_type == "Single Time") {
+                    //Check in orders table if coupon already availed by the user
+                    $couponCount = Order::where(['coupon_code' => $data['code'], 'user_id' => Auth::user()->id])->count();
+                    if ($couponCount >= 1) {
+                        $message = "This coupon code already availed by you!";
+                    }
+                }
 
                 //Get all selected categories from coupon and convert to array
                 $catArr = explode(",", $couponDetails->categories);
@@ -574,8 +583,11 @@ class ProductsController extends Controller
                 $mobile = Auth::user()->mobile;
 
                 Sms::sendSms($message, $mobile); */
+            } else if ($data['payment_gateway'] == "Paypal") {
+                //Redirect User to Paypal Page after saving order
+                return redirect('/paypal');
             } else {
-                echo "Prepaid Payment methods coming soon";
+                echo "Other Prepaid Payment methods coming soon";
             }
 
             return redirect('thanks');

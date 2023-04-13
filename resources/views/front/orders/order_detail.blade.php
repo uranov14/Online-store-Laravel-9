@@ -67,22 +67,40 @@
             </td>
           </tr> 
           @if (!empty($orderDetails['coupon_code']))
-          <tr>
-            <th>
-              Coupon Code
-            </th>
-            <td>
-              {{ $orderDetails['coupon_code'] }}
-            </td>
-          </tr> 
-          <tr>
-            <th>
-              Coupon Amount
-            </th>
-            <td>
-              {{ $orderDetails['coupon_amount'] }}
-            </td>
-          </tr> 
+            <tr>
+              <th>
+                Coupon Code
+              </th>
+              <td>
+                {{ $orderDetails['coupon_code'] }}
+              </td>
+            </tr> 
+            <tr>
+              <th>
+                Coupon Amount
+              </th>
+              <td>
+                {{ $orderDetails['coupon_amount'] }}
+              </td>
+            </tr> 
+          @endif
+          @if (!empty($orderDetails['courier_name']))
+            <tr>
+              <th>
+                Courier Name
+              </th>
+              <td>
+                {{ $orderDetails['courier_name'] }}
+              </td>
+            </tr> 
+            <tr>
+              <th>
+                Tracking Number
+              </th>
+              <td>
+                {{ $orderDetails['tracking_number'] }}
+              </td>
+            </tr> 
           @endif
           <tr>
             <th>
@@ -139,6 +157,14 @@
               {{ $product['product_qty'] }}
             </td>
           </tr> 
+          @if (!empty($orderDetails['courier_name']))
+            <tr>
+              <th>Courier Name :</th>
+              <td>{{ $orderDetails['courier_name'] }}</td>
+              <th>Tracking Number :</th>
+              <td>{{ $orderDetails['tracking_number'] }}</td>
+            </tr> 
+          @endif
           @endforeach
         </tbody>
       </table>

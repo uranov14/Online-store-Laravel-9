@@ -5,7 +5,7 @@
 <div class="page-style-a">
   <div class="container">
       <div class="page-intro">
-          <h2>Cart</h2>
+          <h2>Payment</h2>
           <ul class="bread-crumb">
               <li class="has-separator">
                   <i class="ion ion-md-home"></i>
@@ -24,8 +24,9 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12" align="center">
-        <h3>YOUR ORDER HAS BEEN PLACED SUCCESSFULLY</h3>
-        <p>Your order number is <strong>{{ Session::get('order_id') }}</strong> and Grand total is <strong>{{ Session::get('grand_total') }}</strong></p>
+        <h3>YOUR PAYMENT HAS BEEN CONFIRMED</h3>
+        <p>Thanks for the Payment. We will process your order very soon!</p>
+        <p>Your order number is <strong>{{ Session::get('order_id') }}</strong> and total amount paid is <strong>{{ Session::get('grand_total') }}</strong></p>
       </div>
     </div>
   </div>
@@ -36,4 +37,6 @@
 @php
   Session::forget('grand_total'); 
   Session::forget('order_id');
+  Session::forget('couponCode'); 
+  Session::forget('couponAmount');
 @endphp

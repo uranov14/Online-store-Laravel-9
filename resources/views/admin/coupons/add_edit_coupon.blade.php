@@ -101,7 +101,7 @@
                 <div class="form-group" style="display: none;" id="couponField">
                   <label for="coupon_code">Coupon Code</label>
                   <input 
-                    type="radio" 
+                    type="text" 
                     class="form-control" 
                     name="coupon_code" 
                     id="product_code"

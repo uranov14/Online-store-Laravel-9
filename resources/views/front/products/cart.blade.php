@@ -116,7 +116,7 @@
                 <div class="coupon-continue-checkout u-s-m-b-60">
                     <div class="button-area">
                         <a href="{{ url('/') }}" class="continue">Continue Shopping</a>
-                        <a href="{{ url('/checkout') }}" class="checkout">Proceed to Checkout</a>
+                        <a href="{{ url('/checkout') }}" id="proceedCheckout" class="checkout">Proceed to Checkout</a>
                     </div>
                 </div>
                 <!-- Coupon /- -->

@@ -128,7 +128,7 @@ foreach ($getCartItems as $item) {
               </a>
               <div>
                 <h6 class="brand-span font-weight-bold mb-0 mt-1">Ukrainian</h6>
-                <h6 class="brand-span font-weight-bold mb-0 pl-3 ml-5">sector</h6>
+                <h6 class="brand-span font-weight-bold mb-0 pl-3 ml-5">Cyclone</h6>
               </div>
             </div>
           </div>

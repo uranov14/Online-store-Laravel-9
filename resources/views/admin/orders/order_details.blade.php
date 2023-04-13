@@ -1,4 +1,7 @@
-<?php use App\Models\Product; ?>
+<?php 
+use App\Models\Product; 
+use App\Models\OrdersLog; 
+?>
 
 @extends('admin.layouts.layout')
 
@@ -18,7 +21,7 @@
         <div class="row">
           <div class="col-12 col-xl-8 mb-4 mb-xl-0">
             <h3 class="font-weight-bold">
-                Order #{{ $orderDetails['id'] }}
+                Order # {{ $orderDetails['id'] }}
             </h3>
             <h6 class="font-weight-normal mb-1">
               <a href="{{ url('admin/orders') }}">Back to Orders</a>
@@ -175,8 +178,8 @@
             @if (Auth::guard('admin')->user()->type != "vendor")
               <form action="{{ url('admin/update-order-status') }}" method="post">@csrf
                 <input type="hidden" name="order_id" value="{{ $orderDetails['id'] }}">
-                <select name="order_status" id="" required>
-                  <option class="d-none" value="">Select</option>
+                <select name="order_status" id="order_status" required>
+                  <option class="d-none" value="" selected>Select</option>
                   @foreach ($orderStatuses as $status)
                     <option 
                       value="{{ $status['name'] }}" 
@@ -188,8 +191,37 @@
                     </option>
                   @endforeach
                 </select>
-                <button type="submit">Update</button>
+
+                <input type="text" style="width: 145px; height: 25px;" name="courier_name" id="courier_name" placeholder="Courier Name">
+
+                <input type="text" style="width: 145px; height: 25px;" name="tracking_number" id="tracking_number" placeholder="Tracking Number">
+                
+                <button type="submit" class="mt-2">Update</button>
               </form>
+              <br>
+              @foreach ($orderLog as $key => $log)
+              {{-- @php
+                echo "<pre>"; print_r($log['orders_products'][$key]['product_code']); die;
+              @endphp --}}
+                <strong>{{ $log['order_status'] }}</strong> :&nbsp;{{ date('Y-m-d h:i:s', strtotime($log['created_at'])) }}
+                
+                  @if (isset($log['order_item_id']) && $log['order_item_id'] != 0)
+
+                    @php
+                      $getItemOrderDetails = OrdersLog::getItemOrderDetails($log['order_item_id']);
+                    @endphp
+
+                    - for item: {{ $getItemOrderDetails['product_code'] }}
+                    @if (!empty($getItemOrderDetails['courier_name']))
+                      <br><span>Courier Name: {{ $getItemOrderDetails['courier_name'] }}</span>
+                    @endif
+                    @if (!empty($getItemOrderDetails['tracking_number']))
+                      <br><span>Tracking Number: {{ $getItemOrderDetails['tracking_number'] }}</span>
+                    @endif
+                  @endif
+                
+                <br><hr>
+              @endforeach
             @else
               This feature is restricted.
             @endif
@@ -227,7 +259,7 @@
                       $getProductImage = Product::getProductImage($product['product_id'])
                     @endphp
                     <a target="_blank" href="{{ url('product/'.$product['product_id']) }}">
-                      <img width="50" src="{{ asset('front/images/product_images/small/'.$getProductImage) }}" alt="Product image">
+                      <img style="transform: scale(1,2); width: 80px; margin-top: 1rem" src="{{ asset('front/images/product_images/small/'.$getProductImage) }}" alt="Product image">
                     </a>
                   </td>
                   <td>
@@ -248,7 +280,7 @@
                   <td>
                     <form action="{{ url('admin/update-order-item-status') }}" method="post">@csrf
                       <input type="hidden" name="order_item_id" value="{{ $product['id'] }}">
-                      <select name="order_item_status" id="" required>
+                      <select name="order_item_status" id="order_item_status" required>
                         <option class="d-none" value="">Select</option>
                         @foreach ($orderItemStatuses as $status)
                           <option 
@@ -262,6 +294,21 @@
                         @endforeach
                       </select>
                       <button type="submit">Update</button>
+                      <br>
+                      <input type="text" 
+                        style="width: 145px; height: 25px;" name="item_courier_name" id="item_courier_name" placeholder="Courier Name"
+                        @if (!empty($product['courier_name']))
+                          value="{{ $product['courier_name'] }}"
+                        @endif
+                      >
+                      <br>
+                      <input type="text" 
+                        style="width: 145px; height: 25px;" name="item_tracking_number" id="item_tracking_number" placeholder="Tracking Number"
+                        @if (!empty($product['tracking_number']))
+                          value="{{ $product['tracking_number'] }}"
+                        @endif
+                      >
+
                     </form>
                   </td>
                 </tr> 

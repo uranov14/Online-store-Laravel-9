@@ -451,4 +451,30 @@ $(document).ready(function() {
     $("#AutomaticCoupon").click(function () {
         $("#couponField").hide();
     })
+
+    //Show Courier Name and Tracking Number in case of Shipped Order Status
+    $("#courier_name").hide();
+    $("#tracking_number").hide();
+    $("#order_status").on("change", function() {
+        if (this.value == "Shipped") {
+            $("#courier_name").show();
+            $("#tracking_number").show();
+        } else{
+            $("#courier_name").hide();
+            $("#tracking_number").hide();
+        }   
+    });
+
+    //Show Item Courier Name and Tracking Number in case of Shipped Order Item Status
+    /* $("#item_courier_name").hide();
+    $("#item_tracking_number").hide();
+    $("#order_item_status").on("change", function() {
+        if (this.value == "Shipped") {
+            $("#item_courier_name").show();
+            $("#item_tracking_number").show();
+        } else{
+            $("#item_courier_name").hide();
+            $("#item_tracking_number").hide();
+        }   
+    }); */
 })

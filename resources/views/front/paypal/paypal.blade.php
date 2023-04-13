@@ -12,7 +12,7 @@
                   <a href="index.html">Home</a>
               </li>
               <li class="is-marked">
-                  <a href="#">Thanks</a>
+                  <a href="#">Proceed to Payment</a>
               </li>
           </ul>
       </div>
@@ -24,16 +24,16 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12" align="center">
-        <h3>YOUR ORDER HAS BEEN PLACED SUCCESSFULLY</h3>
+        <h3>PLEASE MAKE PAYMENT FOR YOUR ORDER!</h3>
         <p>Your order number is <strong>{{ Session::get('order_id') }}</strong> and Grand total is <strong>{{ Session::get('grand_total') }}</strong></p>
+        <form action="{{ route('payment') }}" method="post">@csrf
+          <input type="hidden" name="amount" value="{{ round(Session::get('grand_total') / 36.95, 2) }}">
+
+            <input type="image" src="https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/C2/logos-buttons/44_Yellow_CheckOut_Pill_Button.png"/>
+        </form>
       </div>
     </div>
   </div>
 </div>
 <!-- Cart-Page /- -->
 @endsection
-
-@php
-  Session::forget('grand_total'); 
-  Session::forget('order_id');
-@endphp

@@ -121,8 +121,14 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::get('orders/{id}', 'OrderController@orderDetails');
         Route::post('update-order-status', 'OrderController@updateOrderStatus');
         Route::post('update-order-item-status', 'OrderController@updateOrderItemStatus');
+
+        //Order Invoices
+        Route::get('orders/invoice/{id}', 'OrderController@viewOrderInvoice');
+        Route::get('orders/invoice/pdf/{id}', 'OrderController@viewPDFInvoice');
     });
 }); 
+
+Route::get('orders/invoice/download/{id}', 'App\Http\Controllers\Admin\OrderController@viewPDFInvoice');
 
 Route::namespace('App\Http\Controllers\Front')->group(function() {
     Route::get('/', 'IndexController@index');
@@ -197,6 +203,12 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
         //Users Orders
         Route::get('user/orders/{id?}', 'OrderController@orders');
+
+        //Paypal Routes
+        Route::get('paypal', 'PaypalController@paypal');
+        Route::post('pay','PaypalController@pay')->name('payment');
+        Route::get('success', 'PaypalController@success');
+        Route::get('error', 'PaypalController@error');
     });
 
     //User Login

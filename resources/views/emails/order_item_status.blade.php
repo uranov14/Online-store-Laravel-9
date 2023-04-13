@@ -17,13 +17,18 @@
       </tr>
       <tr><td>&nbsp;</td></tr>
       <tr>
-        <td>Thank you for shopping with us. Your Order Details are as below:</td>
+        <td>Your Order #{{ $order_id }} Item status has been updated to {{ $order_status }}!</td>
       </tr>
       <tr><td>&nbsp;</td></tr>
+      @if (!empty($courier_name) && !empty($tracking_number))
+        <tr>
+          <td>Courier Name is <strong>{{ $courier_name }}</strong> and Tracking Number is <strong>{{ $tracking_number }}</strong></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+      @endif
       <tr>
-        <th>Order no. {{ $order_id }}</th>
+        <td>Your Order Item details are as below:</td>
       </tr>
-      <tr><td>&nbsp;</td></tr>
       <tr>
         <table style="width: 95%;" cellpadding="5" cellspacing="5" bgcolor="#f7f4f4">
           <thead>
@@ -48,35 +53,6 @@
             </tr>
             @endforeach
             <tr><td>&nbsp;</td></tr>
-            <tr>
-              <th colspan="5" align="right">
-                Shipping Charges:
-              </th>
-              <td>
-                {{ $orderDetails['shipping_charges'] }} &#x20b4;
-              </td>
-            </tr>
-            <tr>
-              <th colspan="5" align="right">
-                Coupon Discount:
-              </th>
-              <td>
-                @if ($orderDetails['coupon_amount'] > 0)
-                  {{ $orderDetails['coupon_amount'] }}
-                @else
-                  0
-                @endif
-                &#x20b4;
-              </td>
-            </tr>
-            <tr>
-              <th colspan="5" align="right">
-                Grand Total:
-              </th>
-              <td>
-                {{ $orderDetails['grand_total'] }} &#x20b4;
-              </td>
-            </tr>
           </tbody>
         </table>
       </tr>
@@ -87,10 +63,8 @@
             <tr>
               <th>Delivery Address:</th>
             </tr>
-            <tr>
-              <th>&nbsp;</th>
-            </tr>
           </thead>
+          <tr><td>&nbsp;</td></tr>
           <tbody>
             <tr>
               <th align="left">Name: </th>
@@ -136,12 +110,6 @@
         </table>
       </tr>
       <br>
-      <tr>
-        <td>
-          <a href="{{ url('orders/invoice/download/'.$orderDetails['id']) }}">Click here to Download Order Invoice</a>
-        </td>
-      </tr>
-      <br><br>
       <tr>
         <td>
           For any queries, you can contact us at 

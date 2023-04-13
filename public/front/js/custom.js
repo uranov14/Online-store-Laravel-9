@@ -96,6 +96,16 @@ $(document).ready(function() {
 		}
 	}); 
 
+	//Show loader when user click to button "Place Order"
+	$("#placeOrder").click(function() {
+		$(".loader").show();
+	});
+
+	//Show loader when user click to button "Proceed to Checkout"
+	$("#proceedCheckout").click(function() {
+		$(".loader").show();
+	});
+
 	//Register Form Validation
 	$("#registerForm").submit(function() {
 		$(".loader").show();

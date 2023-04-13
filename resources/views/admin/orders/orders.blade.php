@@ -75,6 +75,12 @@
                           <a href="{{ url('admin/orders/'.$order['id']) }}" title="View Order Details">
                             <i class="mdi mdi-file-document"></i>
                           </a>
+                          <a target="_blank" href="{{ url('admin/orders/invoice/'.$order['id']) }}" title="View Order Invoice">
+                            <i class="mdi mdi-printer"></i>
+                          </a>
+                          <a target="_blank" href="{{ url('admin/orders/invoice/pdf/'.$order['id']) }}" title="Print PDF Invoice">
+                            <i class="mdi mdi-file-pdf"></i>
+                          </a>
                         </td>
                       </tr>  
                     @endif
