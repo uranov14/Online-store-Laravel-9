@@ -26,13 +26,13 @@
                         <h6>COMPANY</h6>
                         <ul>
                             <li>
-                                <a href="about.html">About Us</a>
+                                <a href="{{ url('about-us') }}">About Us</a>
                             </li>
                             <li>
                                 <a href="contact.html">Contact Us</a>
                             </li>
                             <li>
-                                <a href="faq.html">FAQ</a>
+                                <a href="{{ url('faq') }}">FAQ</a>
                             </li>
                         </ul>
                     </div>

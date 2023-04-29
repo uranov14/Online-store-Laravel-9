@@ -35,7 +35,7 @@ class AddressController extends Controller
                 'delivery_city' => 'required|string|max:100',
                 'delivery_state' => 'required|string|max:100',
                 'delivery_country' => 'required|string|max:100',
-                'delivery_pincode' => 'required|digits:6',
+                'delivery_pincode' => 'required',
                 'delivery_mobile' => 'required|numeric|digits:10',
             ]);
 

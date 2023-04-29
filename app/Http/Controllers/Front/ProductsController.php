@@ -20,6 +20,7 @@ use App\Models\Country;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Sms;
+use App\Models\ShippingCharge;
 use Session;
 use DB;
 use Auth;
@@ -109,35 +110,66 @@ class ProductsController extends Controller
                 abort(404);
             }
         } else {
-            $url = Route::getFacadeRoot()->current()->uri();
-            $categoryCount = Category::where(['url'=>$url, 'status'=>1])->count();
+            if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) {
+                $search_product = $_REQUEST['search'];
+                $categoryDetails['breadcrumbs'] = $search_product;
+                $categoryDetails['categoryDetails']['category_name'] = $search_product;
+                $categoryDetails['categoryDetails']['description'] = "Search Product for ".$search_product."  (section Category Description - ProductsController@listing)";
 
-            if ($categoryCount > 0) {
-                //echo "Category exists"; die;
-                $categoryDetails = Category::categoryDetails($url);
-                //dd($categoryDetails);
-                $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1);
-                
-                //checking for Sort
-                if (isset($_GET['sort']) && !empty($_GET['sort'])) {
-                    if ($_GET['sort'] == 'product_latest') {
-                        $categoryProducts->orderBy('products.id', 'Desc');
-                    } else if ($_GET['sort'] == 'price_lowest') {
-                        $categoryProducts->orderBy('products.product_price', 'Asc');
-                    } else if ($_GET['sort'] == 'price_highest') {
-                        $categoryProducts->orderBy('products.product_price', 'Desc');
-                    } else if ($_GET['sort'] == 'name_a_z') {
-                        $categoryProducts->orderBy('products.product_name', 'Asc');
-                    } else if ($_GET['sort'] == 'name_z_a') {
-                        $categoryProducts->orderBy('products.product_name', 'Desc');
-                    }
+                /* $categoryProducts = Product::with('brand')->where(function($query)use($search_product) {
+                    $query->where('products.product_name', 'like', '%'.$search_product.'%')
+                    ->orWhere('products.product_code', 'like', '%'.$search_product.'%')
+                    ->orWhere('products.product_color', 'like', '%'.$search_product.'%')
+                    ->orWhere('products.description', 'like', '%'.$search_product.'%');
+                })->where('products.status', 1); */
+
+                $categoryProducts = Product::select('products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price', 'products.product_discount', 'products.product_image', 'products.description', 'products.product_code')->with('brand')->join('categories', 'products.category_id','=','categories.id')->where(function($query)use($search_product) {
+                    $query->where('products.product_name', 'like', '%'.$search_product.'%')
+                    ->orWhere('products.product_code', 'like', '%'.$search_product.'%')
+                    ->orWhere('products.product_color', 'like', '%'.$search_product.'%')
+                    ->orWhere('products.description', 'like', '%'.$search_product.'%')
+                    ->orWhere('categories.category_name', 'like', '%'.$search_product.'%');
+                })->where('products.status', 1);
+
+                if (isset($_REQUEST['section_id']) && !empty($_REQUEST['section_id'])) {
+                    $categoryProducts = $categoryProducts->where('products.section_id', $_REQUEST['section_id']);
                 }
+                $categoryProducts = $categoryProducts->get();
+                // $products = Product::join('categories', 'categories.id','=','products.id')->get()->toArray();
+                //dd($categoryProducts); 
+                return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts'));
 
-                $categoryProducts = $categoryProducts->paginate(9);
-                //dd($categoryProducts);
-                return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts', 'url'));
             } else {
-                abort(404);
+                $url = Route::getFacadeRoot()->current()->uri();
+                $categoryCount = Category::where(['url'=>$url, 'status'=>1])->count();
+
+                if ($categoryCount > 0) {
+                    //echo "Category exists"; die;
+                    $categoryDetails = Category::categoryDetails($url);
+                    //dd($categoryDetails);
+                    $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1);
+                    
+                    //checking for Sort
+                    if (isset($_GET['sort']) && !empty($_GET['sort'])) {
+                        if ($_GET['sort'] == 'product_latest') {
+                            $categoryProducts->orderBy('products.id', 'Desc');
+                        } else if ($_GET['sort'] == 'price_lowest') {
+                            $categoryProducts->orderBy('products.product_price', 'Asc');
+                        } else if ($_GET['sort'] == 'price_highest') {
+                            $categoryProducts->orderBy('products.product_price', 'Desc');
+                        } else if ($_GET['sort'] == 'name_a_z') {
+                            $categoryProducts->orderBy('products.product_name', 'Asc');
+                        } else if ($_GET['sort'] == 'name_z_a') {
+                            $categoryProducts->orderBy('products.product_name', 'Desc');
+                        }
+                    }
+
+                    $categoryProducts = $categoryProducts->paginate(9);
+                    //dd($categoryProducts);
+                    return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts', 'url'));
+                } else {
+                    abort(404);
+                }
             }
         }
         
@@ -216,6 +248,10 @@ class ProductsController extends Controller
             $data = $request->all();
             //echo "<pre>"; print_r($data); die;
 
+            if ($data['quantity'] <= 0) {
+                $data['quantity'] = 1;
+            }
+
             //Check Product Stock is available or not
             $getProductStock = ProductsAttribute::isStockAvailable($data['product_id'], $data['size']);
 
@@ -266,6 +302,8 @@ class ProductsController extends Controller
 
     public function cartUpdate(Request $request) {
         if ($request->ajax()) {
+            Session::forget('couponCode');
+            Session::forget('couponAmount');
             $data = $request->all();
             //echo "<pre>"; print_r($data); die;
 
@@ -300,12 +338,20 @@ class ProductsController extends Controller
             //Update quantity in carts table
             Cart::where('id', $data['cartid'])->update(['quantity'=>$data['qty']]);
             $getCartItems = Cart::getCartItems();
+
+            $total_sum = 0;
+            foreach ($getCartItems as $item) {
+            $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+            $total_sum += $getDiscountAttributePrice['final_price'] * $item['quantity'];;
+            }
+
             $totalCartItems = totalCartItems();
-            Session::forget('couponCode');
-            Session::forget('couponAmount');
+            
             return response()->json([
                 'status'=>true, 
                 'totalCartItems'=>$totalCartItems,
+                'getCartItems'=>$getCartItems,
+                'total_sum'=>round($total_sum, 2),
                 'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
             ]);
         }
@@ -325,7 +371,8 @@ class ProductsController extends Controller
             $totalCartItems = totalCartItems();
             return response()->json([ 
                 'totalCartItems'=>$totalCartItems,
-                'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
+                'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                'headerCartItemsView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
             ]);
         }
     }
@@ -429,6 +476,7 @@ class ProductsController extends Controller
                     } else {
                         $couponAmount = $total_amount * ($couponDetails->amount / 100);
                     }
+                    
                     $grand_total = $total_amount - $couponAmount;
 
                     //Add Coupon Code & Amount in Session variables
@@ -440,11 +488,12 @@ class ProductsController extends Controller
                     return response()->json([ 
                         'status'=>true,
                         'totalCartItems'=>$totalCartItems,
-                        'couponAmount'=>$couponAmount,
-                        'grand_total'=>$grand_total,
+                        'couponAmount'=>round($couponAmount, 2),
+                        'grand_total'=>round($grand_total, 2),
                         'message'=>$message,
                         'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
-                        'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                        'headerView'=>(String)View::make('front.layout.header')->with(compact('getCartItems')),
+                        'headerCartItemsView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
                     ]);
                 }
                 
@@ -453,8 +502,7 @@ class ProductsController extends Controller
     }
 
     public function checkout(Request $request) {
-        $deliveryAddress = DeliveryAddress::deliveryAddress();
-        //dd($deliveryAddress);
+
         $countries = Country::where('status', 1)->get()->toArray();
         $getCartItems = Cart::getCartItems();
         //dd($getCartItems);
@@ -463,9 +511,93 @@ class ProductsController extends Controller
             return redirect('cart')->with('error_message', $message);
         }
 
+        $total_price = 0;
+        $total_weight = 0;
+        foreach ($getCartItems as $item) {
+            $attrPrice = Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+            $total_price += $attrPrice['final_price'] * $item['quantity'];
+
+            $product_weight = $item['product']['product_weight'] * $item['quantity'];
+            $total_weight += $product_weight;
+        }
+        //dd($total_weight);
+
+        $deliveryAddress = DeliveryAddress::deliveryAddress();
+        
+        foreach ($deliveryAddress as $key => $address) {
+            $rate = ShippingCharge::getShippingCharges($total_weight, $address['country']);
+            $deliveryAddress[$key]['shipping_charges'] = $rate;
+
+            //COD Pincode is Available or Not
+            $deliveryAddress[$key]['codpincodeCount'] = DB::table('cod_pincodes')->where('pincode', $address['pincode'])->count();
+
+            //Prepaid Pincode is Available or Not
+            $deliveryAddress[$key]['prepaidpincodeCount'] = DB::table('prepaid_pincodes')->where('pincode', $address['pincode'])->count();
+        }
+        //dd($deliveryAddress);
+
         if ($request->isMethod('post')) {
             $data = $request->all();
             //echo "<pre>"; print_r($data); die;
+
+            //Website Secutity
+            foreach ($getCartItems as $item) {
+                //Prevent Disabled Product to Order
+                $product_status = Product::getProductStatus($item['product_id']);
+
+                if ($product_status == 0) {
+                    Session::forget('couponCode');
+                    Session::forget('couponAmount');
+
+                    Product::deleteCartProduct($item['product_id']);
+                    $message = "One of the Product is disabled! Please try again.";
+                    return redirect('/cart')->with('error_message', $message);
+                }
+
+                //Prevent Sold Out Product to Order
+                $getProductStock = ProductsAttribute::isStockAvailable($item['product_id'], $item['size']);
+                if ($getProductStock <= 0) {
+                    Session::forget('couponCode');
+                    Session::forget('couponAmount');
+
+                    Product::deleteCartProduct($item['product_id']);
+                    $message = "One of the Product is sold out! Please try again.";
+                    return redirect('/cart')->with('error_message', $message);
+                }
+                if ($getProductStock - $item['quantity'] < 0) {
+                    Session::forget('couponCode');
+                    Session::forget('couponAmount');
+
+                    Product::deleteCartProduct($item['product_id']);
+                    $message = "The quantity ordered is not in stock. Available quantity is: ".$getProductStock;
+                    return redirect('/cart')->with('error_message', $message);
+                }
+
+                //Prevent Disabled Product Attribute to Order
+                $getAttributeStatus = ProductsAttribute::getAttributeStatus($item['product_id'], $item['size']);
+
+                if ($getAttributeStatus == 0) {
+                    Session::forget('couponCode');
+                    Session::forget('couponAmount');
+
+                    Product::deleteCartProduct($item['product_id']);
+                    $message = "One of the Product Attribute is disabled! Please try again.";
+                    return redirect('/cart')->with('error_message', $message);
+                }
+
+                //Prevent Disabled Categories Products to Order
+                $getCategoryStatus = Category::getCategoryStatus($item['product']['category_id']);
+
+                if ($getCategoryStatus == 0) {
+                    Session::forget('couponCode');
+                    Session::forget('couponAmount');
+
+                    /* Product::deleteCartProduct($item['product_id']);
+                    $message = "This is Category Products is disabled! Please select another product."; */
+                    $message = $item['product']['product_name']." with ".$item['size']." Size is not Availeble. Please remove this product from Cart and choose some other product.";
+                    return redirect('/cart')->with('error_message', $message);
+                }
+            }
 
             //Delivery Address Validation
             if (empty($data['address_id'])) {
@@ -509,6 +641,10 @@ class ProductsController extends Controller
 
             //Calculate Shipping Charges
             $shipping_charges = 0;
+
+            //Get Shipping Charges
+            $shipping_charges = ShippingCharge::getShippingCharges($total_weight, $deliveryAddress['country']);
+
             //Calculate Grand Total
             $grand_total = $total_price + $shipping_charges - Session::get('couponAmount');
 
@@ -556,6 +692,13 @@ class ProductsController extends Controller
                 $cartItem->product_price = $getDiscountAttributePrice['final_price'];
                 $cartItem->product_qty = $item['quantity'];
                 $cartItem->save();
+
+                //Reduce Stock
+                $getProductStock = ProductsAttribute::isStockAvailable($item['product_id'], $item['size']);
+
+                $newStock = $getProductStock - $item['quantity'];
+
+                ProductsAttribute::where(['product_id'=>$item['product_id'], 'size'=>$item['size']])->update(['stock'=>$newStock]);
             }
 
             //Insert Order Id in Session Variable
@@ -593,7 +736,7 @@ class ProductsController extends Controller
             return redirect('thanks');
         }
         
-        return view('front.products.checkout')->with(compact('deliveryAddress', 'countries', 'getCartItems'));
+        return view('front.products.checkout')->with(compact('deliveryAddress', 'countries', 'getCartItems', 'total_price'));
     }
 
     public function thanks() {
@@ -605,6 +748,23 @@ class ProductsController extends Controller
             return view('front.products.thanks');
         } else {
             return redirect('cart');
+        }
+    }
+
+    public function checkPincode(Request $request) {
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+           //COD Pincode is Available or Not
+           $codPincodeCount = DB::table('cod_pincodes')->where('pincode', $data['pincode'])->count();
+
+           //Prepaid Pincode is Available or Not
+           $prepaidPincodeCount = DB::table('prepaid_pincodes')->where('pincode', $data['pincode'])->count(); 
+
+           if ($codPincodeCount == 0 && $prepaidPincodeCount == 0) {
+            echo "This pincode is not available for Delivery.";
+           } else {
+            echo "This pincode is available for Delivery.";
+           }
         }
     }
 }

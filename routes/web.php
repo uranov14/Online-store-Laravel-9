@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Category;
+use App\Models\CmsPage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,6 +36,8 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         Route::match(['get', 'post'], 'update-admin-details', 'AdminController@updateAdminDetails');
         //Update Vendor Details
         Route::match(['get', 'post'], 'update-vendor-details/{slug}', 'AdminController@updateVendorDetails');
+        //Update Vendor Commission
+        Route::post('update-vendor-commission', 'AdminController@updateVendorCommission');
         //View Admin / Subadmins / Vendors
         Route::get('admins/{type?}', 'AdminController@admins');
         //View Vendor Details
@@ -125,6 +128,17 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
         //Order Invoices
         Route::get('orders/invoice/{id}', 'OrderController@viewOrderInvoice');
         Route::get('orders/invoice/pdf/{id}', 'OrderController@viewPDFInvoice');
+
+        //Shipping Charges
+        Route::get('shipping-charges', 'ShippingController@shippingCharges');
+        Route::post('update-shipping-status', 'ShippingController@updateShippingStatus');
+        Route::match(['get', 'post'], 'add-edit-shipping/{id}', 'ShippingController@addEditShipping');
+
+        //CMS Pages
+        Route::get('cms-pages', 'CmsController@cmspages');
+        Route::post('update-cms-page-status', 'CmsController@updatePageStatus');
+        Route::get('delete-page/{id}', 'CmsController@deletePage');
+        Route::match(['get', 'post'], 'add-edit-cms-page/{id?}', 'CmsController@addEditCmsPage');
     });
 }); 
 
@@ -138,6 +152,12 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
     //dd($categoriesUrls);
     foreach ($categoriesUrls as $key => $url) {
         Route::match(['get', 'post'],'/'.$url, 'ProductsController@listing');
+    } 
+
+    // CMS Pages Routes
+    $cmsUrls = CmsPage::select('url')->where('status', 1)->get()->pluck('url')->toArray();
+    foreach ($cmsUrls as $key => $url) {
+        Route::get($url, 'CmsController@cmsPage');
     } 
 
     //Show Vendor Products
@@ -175,6 +195,13 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
     //User Register
     Route::post('user/register', 'UserController@userRegister');
+
+    //Search Products
+    Route::get('search-products', 'ProductsController@listing');
+
+    //Check Pincode
+    Route::post('check-pincode', 'ProductsController@checkPincode');
+
 
     Route::group(['middleware'=>['auth']], function() {
         //User Account

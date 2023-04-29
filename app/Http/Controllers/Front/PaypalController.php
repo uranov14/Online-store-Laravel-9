@@ -107,6 +107,15 @@ class PaypalController extends Controller
                     $message->to($email)->subject('Order Placed - Your Shop!');
                 });
 
+                //Reduce Stock
+                foreach ($orderDetails['orders_products'] as $key => $order) {
+                    $getProductStock = ProductsAttribute::isStockAvailable($order['product_id'], $order['product_size']);
+
+                    $newStock = $getProductStock - $order['product_qty'];
+
+                    ProductsAttribute::where(['product_id'=>$order['product_id'], 'size'=>$order['product_size']])->update(['stock'=>$newStock]);
+                }
+
                 //Empty the Cart
                 Cart::where('user_id', Auth::user()->id)->delete();
 

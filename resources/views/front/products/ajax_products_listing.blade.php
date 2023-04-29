@@ -54,7 +54,8 @@
                 </div>
 
                 @php
-                    $getDiscountPrice = App\Models\Product::getDiscountPrice($product['id']);
+                //dd($product['product_name']);
+                    $getDiscountPrice = Product::getDiscountPrice($product['id']);
                 @endphp
 
                 <div class="price-template">

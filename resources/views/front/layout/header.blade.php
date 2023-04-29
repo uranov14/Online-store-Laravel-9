@@ -14,7 +14,10 @@ foreach ($getCartItems as $item) {
 
 <header>
     <!-- Top-Header -->
-    <div class="full-layer-outer-header">
+    <div class="headerWelcome">
+      <h1 style="text-align: center; color: gold; font-weight: bold;">Welcome!</h1>
+    </div>
+    <div class="topHeader full-layer-outer-header">
       <div class="container clearfix">
         <nav>
           <ul class="primary-nav g-nav">
@@ -123,28 +126,41 @@ foreach ($getCartItems as $item) {
         <div class="row clearfix align-items-center">
           <div class="col-lg-3 col-md-9 col-sm-6">
             <div class="d-flex">
-              <a href="#">
+              <a href="{{ url("/") }}">
                 <img src="{{ asset('front/images/main-logo/glory_to_ukraine.png') }}" alt="Logo-shop">
               </a>
               <div>
-                <h6 class="brand-span font-weight-bold mb-0 mt-1">Ukrainian</h6>
+                <h5 class="brand-span font-weight-bold mb-0 mt-1">Ukrainian</h5>
                 <h6 class="brand-span font-weight-bold mb-0 pl-3 ml-5">Cyclone</h6>
               </div>
             </div>
           </div>
           <div class="col-lg-6 u-d-none-lg">
-            <form class="form-searchbox">
-              <label class="sr-only" for="search-landscape">Search</label>
-              <input id="search-landscape" type="text" class="text-field" placeholder="Search everything">
+            <form class="form-searchbox" action="{{ url('/search-products') }}" method="GET">
+              <label class="sr-only" for="search">Search</label>
+              <input 
+                name="search" id="search" 
+                type="text" class="text-field" 
+                placeholder="Search everything"
+                @if (isset($_REQUEST['search']) && !empty($_REQUEST['search']))
+                  value="{{ $_REQUEST['search'] }}"
+                @endif
+              >
               <div class="select-box-position">
                 <div class="select-box-wrapper select-hide">
                   <label class="sr-only" for="select-category">Choose category for search</label>
-                  <select class="select-box" id="select-category">
-                    <option selected="selected" value="">
+                  <select class="select-box" id="select-category" name="section_id">
+                    <option value="">
                       All
                     </option>
                     @foreach ($sections as $section)
-                    <option value="">{{ $section['name'] }}</option>
+                    <option 
+                    @if (isset($_REQUEST['section_id']) && !empty($_REQUEST['section_id']))
+                      value="{{ $section['id'] }}"
+                    @endif
+                    >
+                      {{ $section['name'] }}
+                    </option>
                     @endforeach
                   </select>
                 </div>
@@ -156,7 +172,7 @@ foreach ($getCartItems as $item) {
             <nav>
               <ul class="mid-nav g-nav">
                 <li class="u-d-none-lg">
-                  <a href="index.html">
+                  <a href="{{ url("/") }}">
                   <i class="ion ion-md-home u-c-brand"></i>
                   </a>
                 </li>
@@ -169,7 +185,13 @@ foreach ($getCartItems as $item) {
                   <a href="javascript:;" id="mini-cart-trigger">
                   <i class="ion ion-md-basket"></i>
                   <span class="item-counter totalCartItems">{{ $totalCartItems }}</span>
-                  <span class="item-price">{{ $total_sum - Session::get('couponAmount') }}</span>
+                  <span class="item-price price">
+                    @if ($totalCartItems == 0)
+                      {{ $total_sum }}
+                    @else
+                      {{ $total_sum - Session::get('couponAmount') }}
+                    @endif
+                  </span>
                   </a>
                 </li>
               </ul>

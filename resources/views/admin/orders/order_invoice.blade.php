@@ -147,7 +147,7 @@
                     <td class="no-line"></td>
                     <td class="no-line"></td>
     								<td class="no-line text-left"><strong>Shipping Charges :</strong></td>
-    								<td class="no-line text-left">0 &#x20b4;</td>
+    								<td class="no-line text-left">{{ $orderDetails['shipping_charges'] }} &#x20b4;</td>
     							</tr>
     							<tr>
     								<td class="no-line"></td>
@@ -157,8 +157,8 @@
     								<td class="no-line text-left"><strong>Grand Total :</strong></td>
     								<td class="no-line text-left">
                       <strong>
-                        {{ $orderDetails['grand_total'] }} &#x20b4;
-                      </strong><br>
+                        {{ $orderDetails['grand_total'] }} 
+                      </strong>&nbsp;&#x20b4;<br>
                       @if ($orderDetails['payment_method'] == "COD")
                         <font color=red>(Already Paid)</font>
                       @endif

@@ -7,12 +7,10 @@
             <div class="col-md-12 grid-margin">
                 <div class="row">
                     <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                        {{-- <a href="{{ url('admin/products') }}" class="btn btn-dark">
-                            <h5 class="font-weight-normal mb-1">
-                                Back to Products
-                            </h5>
-                        </a> --}}
-                        <h4 class="font-weight-bold">
+                        <a href="{{ url('admin/admins/vendor') }}" class="btn btn-dark"> 
+                            Back to Vendors
+                        </a>
+                        <h4 class="font-weight-bold mt-3">
                             Vendor Details
                         </h4>
                     </div>
@@ -34,8 +32,16 @@
                 </div>
             </div>
         </div>
+        @if (Session::has('success_message'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success: </strong>{{ Session::get('success_message') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
         <div class="row">
-            <div class="col-md-4 grid-margin stretch-card">
+            <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Personal Information</h4>
@@ -81,7 +87,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 grid-margin stretch-card">
+            <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Business Information</h4>
@@ -272,7 +278,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 grid-margin stretch-card">
+            <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Bank Information</h4>
@@ -314,6 +320,32 @@
                                 @endif 
                                 readonly
                             >
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Commission Information</h4>
+                        
+                        <div class="form-group">
+                            <form action="{{ url('admin/update-vendor-commission') }}" method="POST">
+                            @csrf
+                                <input type="hidden" name="vendor_id" 
+                                    value="{{ $vendorDetails['vendor_personal']['id'] }}"
+                                >
+                                <label>Commission per order item (%)</label>
+                                <input class="form-control" 
+                                    name="commission"
+                                    @if (isset($vendorDetails['vendor_personal']['commission']))
+                                    value="{{ $vendorDetails['vendor_personal']['commission'] }}" 
+                                    @endif
+                                    required 
+                                >
+                                <br>
+                                <button type="submit">Update</button>
+                            </form>
                         </div>
                     </div>
                 </div>

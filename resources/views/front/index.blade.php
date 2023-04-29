@@ -39,6 +39,22 @@
                     alt="{{ $fixBanners[0]['alt'] }}"
                 >
             </a>
+            {{-- <div class="actor" style="display: flex; justify-content: center; align-items: center;">
+                <span id="advertising">Here can be your advertising!</span>
+            </div>
+            <div class="actor"></div>
+            <div class="actor"></div>
+            <div class="actor"></div>
+            <div class="actor">
+                <a target="_blank" rel="nofollow" href="{{ url($fixBanners[0]['link']) }}" class="mx-auto banner-hover effect-dark-opacity">
+                    <img 
+                        class="img-fluid" 
+                        title="{{ $fixBanners[0]['title'] }}"
+                        src="{{ asset('front/images/banner_images/'.$fixBanners[0]['image']) }}" 
+                        alt="{{ $fixBanners[0]['alt'] }}"
+                    >
+                </a>
+            </div> --}}
         </div>
     </div>
 </div>

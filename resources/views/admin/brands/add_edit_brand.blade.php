@@ -71,11 +71,10 @@
                 action="{{ url('admin/add-edit-brand') }}"
                 @else
                 action="{{ url('admin/add-edit-brand/'.$brand['id']) }}"    
-                @endif
-                action="{{ url('admin/add-edit-brand') }}" 
+                @endif 
                 method="POST"
-                id="updateAdminPasswordForm"
-                name="updateAdminPasswordForm"
+                id="updateBrandForm"
+                name="updateBrandForm"
                 enctype="multipart/form-data"
               >
               @csrf
@@ -83,10 +82,8 @@
                   <label for="brand_name">Brand Name</label>
                   <input 
                     type="text" 
-                    class="form-control" 
-                    
-                    value="{{ $brand['name'] }}"    
-                    
+                    class="form-control"                    
+                    value="{{ $brand['name'] }}"                       
                     name="brand_name" 
                     id="brand_name" 
                     placeholder="Enter Brand Name">

@@ -55,7 +55,7 @@
               Order Total
             </th>
             <td>
-              {{ $orderDetails['grand_total'] }}
+              {{ $orderDetails['grand_total'] }}&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>
             </td>
           </tr> 
           <tr>
@@ -63,7 +63,7 @@
               Shipping Charges
             </th>
             <td>
-              {{ $orderDetails['shipping_charges'] }}
+              {{ $orderDetails['shipping_charges'] }}&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>
             </td>
           </tr> 
           @if (!empty($orderDetails['coupon_code']))
@@ -80,7 +80,7 @@
                 Coupon Amount
               </th>
               <td>
-                {{ $orderDetails['coupon_amount'] }}
+                {{ $orderDetails['coupon_amount'] }}&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>
               </td>
             </tr> 
           @endif

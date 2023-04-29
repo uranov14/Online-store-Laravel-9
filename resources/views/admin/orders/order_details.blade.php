@@ -1,6 +1,10 @@
 <?php 
 use App\Models\Product; 
 use App\Models\OrdersLog; 
+use App\Models\Vendor;
+if (Auth::guard('admin')->user()->type == "vendor") {
+  $getVendorCommission = Vendor::getVendorCommission(Auth::guard('admin')->user()->vendor_id);
+}
 ?>
 
 @extends('admin.layouts.layout')
@@ -235,18 +239,19 @@ use App\Models\OrdersLog;
             <table class="table table-striped table-dark mt-5">
               <thead>
                 <tr align="center">
-                  <th colspan="8">
+                  <th colspan="9">
                     <strong>Products Details</strong>
                   </th>
                 </tr>
                 <tr>
                   <th>#</th>
                   <th>Product Image</th>
-                  <th>Product Code</th>
+                  <th>Code</th>
                   <th>Product Name</th>
-                  <th>Product Size</th>
-                  <th>Product Color</th>
-                  <th>Product Qty</th>
+                  <th>Size</th>
+                  <th>Color</th>
+                  <th>Vendor Price</th>
+                  <th>Qty</th>
                   <th>Item Status</th>
                 </tr>
               </thead>
@@ -266,13 +271,25 @@ use App\Models\OrdersLog;
                     {{ $product['product_code'] }}
                   </td>
                   <td>
-                    {{ $product['product_name'] }}
+                    {{ substr($product['product_name'], 0, 20) }}
                   </td>
                   <td>
                     {{ $product['product_size'] }}
                   </td>
                   <td>
                     {{ $product['product_color'] }}
+                  </td>
+                  <td>
+                    Unit Price:<br>
+                    {{ $product['product_price'] }}&nbsp;&#x20b4;<br>
+                    Total Price:<br>
+                    {{ $total_price = $product['product_price'] * $product['product_qty'] }}&nbsp;&#x20b4;<br>
+                    @if (Auth::guard('admin')->user()->type == "vendor")
+                      Commission:<br>
+                      {{ $commission = round($total_price * $getVendorCommission / 100, 2) }}&nbsp;&#x20b4;<br><br>
+                      <strong style="color: gold;">Final Amount:</strong><br>
+                      <strong>{{ $total_price - $commission }}&nbsp;&#x20b4;</strong>
+                    @endif
                   </td>
                   <td>
                     {{ $product['product_qty'] }}

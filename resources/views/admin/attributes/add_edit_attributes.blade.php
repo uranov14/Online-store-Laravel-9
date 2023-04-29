@@ -5,7 +5,7 @@
     <div class="content-wrapper">
       <div class="row">
         <div class="col-md-12 grid-margin">
-          <a href="{{ url('admin/products') }}" class="btn btn-dark" style="float: right">
+          <a href="{{ url('admin/products') }}" class="btn btn-dark mb-3">
             Back to Products
           </a>
           <div class="row">
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-7 grid-margin stretch-card">
+        <div class="col-md-8 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title d-flex justify-content-center">Add Attributes for {{ $product['product_name'] }}</h4>

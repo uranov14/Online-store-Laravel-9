@@ -47,7 +47,7 @@
           @foreach ($orders as $order)
           <tr>
             <td>
-              <a href="{{ url('user/orders/'.$order['id']) }}">
+              <a href="{{ url('user/orders/'.$order['id']) }}" style="text-decoration: underline; color: red;">
                 {{ $order['id'] }}
               </a>
             </td>
@@ -60,7 +60,7 @@
               {{ $order['payment_method'] }}
             </td>
             <td>
-              {{ $order['grand_total'] }}
+              {{ $order['grand_total'] }}&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>
             </td>
             <td>
               {{ date('Y-m-d h:i:s', strtotime($order['created_at'])) }}

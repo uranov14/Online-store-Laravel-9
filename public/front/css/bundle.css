@@ -110,10 +110,29 @@ body {
 
 /* Page introduction style a */
 .page-style-a {
-  background: url(../images/pattern/pattern-a.png) repeat center center; }
+  animation: kenburns 10s linear infinite;
+  background-position: 50%;
+  inset: 0;
+  width: 100vw; }
   .page-style-a:after {
-    background: rgba(52, 58, 64, 0.5); }
+    background: url(../images/pattern/pattern.jpg) center center; }
 
+@keyframes kenburns {
+  25% {
+    opacity: 1;
+    background-image: url("https://images.unsplash.com/photo-1595131838595-3154b9f4450b?crop=entropy&cs=tinysrgb&fm=jpg&ixid=MnwzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzQ2OTA1MjE&ixlib=rb-4.0.3&q=80");
+  }
+
+  50% {
+    opacity: .5;
+    background-image: url("https://images.unsplash.com/photo-1504221507732-5246c045949b?crop=entropy&cs=tinysrgb&fm=jpg&ixid=MnwzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzQ2OTA1MjE&ixlib=rb-4.0.3&q=80");
+  }
+
+  60% {
+    opacity: 1;
+    background: url(../images/pattern/art_background.jpg) center center;
+  }
+}
 /* Page introduction style b */
 .page-style-b {
   background: url(../images/pattern/pattern-b.png) repeat center center; }

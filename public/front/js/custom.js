@@ -1,5 +1,9 @@
 $(document).ready(function() {
 	//$(".loader").show();
+	setTimeout(function() {
+		$(".headerWelcome").css({'display': 'none'});
+	}, 5000);
+
 	$("#getPrice").change(function() {
 			var size = $(this).val();
 			var product_id = $(this).attr("product_id");
@@ -59,17 +63,24 @@ $(document).ready(function() {
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},
-			data:{cartid:cartid,qty:new_qty},
+			data:{cartid:cartid, qty:new_qty},
 			url:'/cart/update',
 			type:'post',
 			success:function(resp){
 				$(".totalCartItems").html(resp.totalCartItems);
+				$(".couponAmount").html("0");
+				$(".header_price").html(resp.total_sum);
+				$(".price").html(resp.total_sum);
+				$(".grand_total").html(resp.total_sum);
+				resp.getCartItems.forEach(item => {
+					$("."+item['product_id']).html(" X "+item['quantity']);
+				});
 				if(resp.status==false){
 					alert(resp.message);
 				}
 				$("#appendCartItems").html(resp.view);
 			},error:function(){
-				alert("Error with update Cart Items Qty");
+				alert("Error with update Cart Items Qty. Please reload this page!");
 			}
 		});
 	});
@@ -88,9 +99,11 @@ $(document).ready(function() {
 				type:'post',
 				success:function(resp){
 					$(".totalCartItems").html(resp.totalCartItems);
+					$(".price").html("0");
 					$("#appendCartItems").html(resp.view);
+					$(".mini-cart-wrapper").html(resp.headerCartItemsView);
 				},error:function(){
-					alert("Error");
+					alert("Error with delete Cart Item");
 				}
 			});
 		}
@@ -103,6 +116,11 @@ $(document).ready(function() {
 
 	//Show loader when user click to button "Proceed to Checkout"
 	$("#proceedCheckout").click(function() {
+		$(".loader").show();
+	});
+	
+	//Show loader when user click to button "search"
+	$("#btn-search").click(function() {
 		$(".loader").show();
 	});
 
@@ -316,7 +334,9 @@ $(document).ready(function() {
 				}
 				$(".totalCartItems").html(resp.totalCartItems);
 				$("#appendCartItems").html(resp.view);
-				$("#appendHeaderCartItems").html(resp.headerView);
+				$(".header_price").html(resp.grand_total);
+				$(".grand_total").html(resp.grand_total);
+				$("#appendHeaderCartItems").html(resp.headerCartItemsView);
 				if (resp.couponAmount > 0) {
 					$(".couponAmount").html(resp.couponAmount);
 				} else{
@@ -412,6 +432,56 @@ $(document).ready(function() {
 		}
 	});
 
+	//Calculate Grand Total
+	$("input[name=address_id]").bind('change', function() {
+		var shipping_charges = $(this).attr('shipping_charges');
+		//alert(shipping_charges);
+		var coupon_amount = $(this).attr('coupon_amount');
+		var codpincodeCount = $(this).attr('codpincodeCount');
+		var prepaidpincodeCount = $(this).attr('prepaidpincodeCount');
+		if (codpincodeCount > 0) {
+			$(".codMethod").show();
+		} else{
+			$(".codMethod").hide();
+		}
+		if (prepaidpincodeCount > 0) {
+			$(".prepaidMethod").show();
+		} else{
+			$(".prepaidMethod").hide();
+		}
+		if (coupon_amount == "") {
+			coupon_amount = 0;
+		} 
+		$(".coupon_amount").html(coupon_amount + `&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>`);
+		var total_price = $(this).attr('total_price');
+		$(".shipping_charges").html(shipping_charges + `&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>`);
+		var grand_total = parseInt(total_price) + parseInt(shipping_charges) - parseInt(coupon_amount);
+		
+		$(".grand_total").html(grand_total + `&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>`);
+	});
+
+	//Verify Pincode at Detail Page
+	$("#checkPincode").click(function() {
+		var pincode = $("#pincode").val();
+		if (pincode == "") {
+			alert("Please enter Pincode.");
+			return false;
+		}
+
+		$.ajax({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			data: {pincode: pincode},
+			url: '/check-pincode',
+			type:'post',
+			success:function(resp){
+				alert(resp);
+			},error:function(){
+				alert("Error with Verify Pincode");
+			}
+		});
+	});
 })
 
 function get_filter(class_name) {

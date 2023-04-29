@@ -9,6 +9,8 @@ $(document).ready(function() {
     $('#coupons').DataTable();
     $('#users').DataTable();
     $('#orders').DataTable();
+    $('#shipping').DataTable();
+    $('#pages').DataTable();
 
     //Check Admin Password is correct or not
     $("#current_password").keyup(function() {
@@ -55,6 +57,32 @@ $(document).ready(function() {
                 }
             },error: function() {
                 alert('Error with Admin Status');
+            }
+        })
+    })
+
+    //Update CMS Page Status
+    $(document).on("click", ".updatePageStatus", function() {
+        var status = $(this).children("i").attr("status");
+        var page_id = $(this).attr("page_id");
+        //alert(status); 
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'post',
+            url: '/admin/update-cms-page-status',
+            data: {status: status, page_id: page_id},
+            success: function(resp) {
+                //alert(resp);
+                if (resp['status'] == 0) {
+                    $("#page-"+page_id).html("<i class='mdi mdi-bookmark-outline' status='Inactive'></i>")
+                }else {
+                    $("#page-"+page_id).html("<i class='mdi mdi-bookmark-check' status='Active'></i>")
+                }
+            },error: function() {
+                alert('Error with Page Status');
             }
         })
     })
@@ -185,6 +213,32 @@ $(document).ready(function() {
                 }
             },error: function() {
                 alert('Error with status');
+            }
+        })
+    })
+
+    //Update Shipping Status
+    $(document).on("click", ".updateShippingStatus", function() {
+        var status = $(this).children("i").attr("status");
+        var shipping_id = $(this).attr("shipping_id");
+        //alert(user_id);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'post',
+            url: '/admin/update-shipping-status',
+            data: {status: status, shipping_id: shipping_id},
+            success: function(resp) {
+                //alert(resp);
+                if (resp['status'] == 0) {
+                    $("#shipping-"+shipping_id).html("<i class='mdi mdi-bookmark-outline' status='Inactive'></i>")
+                }else {
+                    $("#shipping-"+shipping_id).html("<i class='mdi mdi-bookmark-check' status='Active'></i>")
+                }
+            },error: function() {
+                alert('Error with status Shipping');
             }
         })
     })

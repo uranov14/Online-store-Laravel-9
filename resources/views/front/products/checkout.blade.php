@@ -49,7 +49,15 @@
                 <h4 class="section-h4">Delivery Address</h4>
                 @foreach ($deliveryAddress as $address)
                   <div class="control-group">
-                    <input type="radio" id="address-{{ $address['id'] }}" name="address_id" value="{{ $address['id'] }}">
+                    <input type="radio" 
+                      id="address-{{ $address['id'] }}" name="address_id" 
+                      value="{{ $address['id'] }}" 
+                      shipping_charges="{{ $address['shipping_charges'] }}"
+                      coupon_amount="{{ Session::get('couponAmount') }}" 
+                      total_price="{{ $total_price }}"
+                      codpincodeCount="{{ $address['codpincodeCount'] }}"
+                      prepaidpincodeCount="{{ $address['prepaidpincodeCount'] }}"
+                    >
                     <label for="address_id" class="control-label">
                       {{ $address['name'] }},
                       {{ $address['address'] }},
@@ -129,7 +137,7 @@
                         <h6 class="order-h6">Shipping Charges</h6>
                       </td>
                       <td>
-                        <h6 class="order-h6">0 <strong style="font-size: .675rem;">&#x20b4;</strong></h6>
+                        <h6 class="order-h6 shipping_charges">0 <strong style="font-size: .675rem;">&#x20b4;</strong></h6>
                       </td>
                     </tr>
                     <tr>
@@ -137,7 +145,7 @@
                         <h6 class="order-h6">Coupon Discount</h6>
                       </td>
                       <td>
-                        <h6 class="order-h6">
+                        <h6 class="order-h6 coupon_mount">
                           @if (Session::has('couponAmount'))
                             {{ Session::get('couponAmount') }}
                           @else
@@ -152,18 +160,18 @@
                         <h3 class="order-h3">Grand Total</h3>
                       </td>
                       <td>
-                        <h3 class="order-h3">
+                        <h3 class="order-h3 grand_total">
                           {{ $total_price - Session::get('couponAmount') }}&nbsp;<strong style="font-size: .675rem;">&#x20b4;</strong>
                         </h3>
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                <div class="u-s-m-b-13">
+                <div class="u-s-m-b-13 codMethod">
                     <input type="radio" class="radio-box" name="payment_gateway" id="cash-on-delivery" value="COD">
                     <label class="label-text" for="cash-on-delivery">Cash on Delivery</label>
                 </div>
-                <div class="u-s-m-b-13">
+                <div class="u-s-m-b-13 prepaidMethod">
                     <input type="radio" class="radio-box" name="payment_gateway" id="paypal" value="Paypal">
                     <label class="label-text" for="paypal">Paypal</label>
                 </div>

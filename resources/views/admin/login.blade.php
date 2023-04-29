@@ -56,10 +56,10 @@
               <form class="pt-3" action="{{ url('admin/login') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                  <input type="email" name="email" id="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Username" required>
+                  <input type="email" name="email" id="email" class="form-control form-control-lg" placeholder="Username" required>
                 </div>
                 <div class="form-group">
-                  <input type="password" name="password" id="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password" required>
+                  <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Password" required>
                 </div>
                 <div class="mt-3">
                   <button 

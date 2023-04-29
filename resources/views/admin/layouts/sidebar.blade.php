@@ -472,6 +472,70 @@
                     </ul>
                 </div>
             </li>
+            <li class="nav-item">
+                <a 
+                    class="nav-link @if(Session::get('page') == "cmspages")
+                        activeNavItem
+                    @endif" 
+                    data-toggle="collapse" 
+                    href="#ui-pages" 
+                    aria-expanded="false" 
+                    aria-controls="ui-pages"
+                >
+                    <i class="mdi mdi-image-filter menu-icon"></i>
+                    <span class="menu-title">Pages<br> Management</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-pages">
+                    <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #0e0c9b !important;">
+                        <li class="nav-item">
+                            <a 
+                                id="sec"
+                                @if (Session::get('page') == "cmspages")
+                                    class="nav-link activeNavItem"
+                                @else
+                                    class="nav-link notActiveNavItem"
+                                @endif  
+                                href="{{ url('admin/cms-pages') }}"
+                            >
+                                CMS Pages
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a 
+                    class="nav-link @if(Session::get('page') == "shipping" || Session::get('page') == "add_edit_banner")
+                        activeNavItem
+                    @endif" 
+                    data-toggle="collapse" 
+                    href="#ui-shipping" 
+                    aria-expanded="false" 
+                    aria-controls="ui-shipping"
+                >
+                    <i class="mdi mdi-truck-delivery menu-icon"></i>
+                    <span class="menu-title">Shipping<br> Management</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-shipping">
+                    <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #0e0c9b !important;">
+                        <li class="nav-item">
+                            <a 
+                                id="sec"
+                                @if (Session::get('page') == "shipping")
+                                    class="nav-link activeNavItem"
+                                @else
+                                    class="nav-link notActiveNavItem"
+                                @endif  
+                                href="{{ url('admin/shipping-charges') }}"
+                            >
+                                Shipping Charges
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
         @endif
         <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">

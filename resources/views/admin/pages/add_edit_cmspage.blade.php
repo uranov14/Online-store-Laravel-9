@@ -7,8 +7,8 @@
         <div class="col-md-12 grid-margin">
           <div class="row">
             <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-              <a href="{{ url('admin/products') }}" class="btn btn-dark font-lg">
-                <h5 class="mb-1">Categories</h5>
+              <a href="{{ url('admin/cms-pages') }}">
+                <h4 style="text-decoration: underline;">CMS Pages</h4>
               </a>
             </div>
             <div class="col-12 col-xl-4">
@@ -68,121 +68,58 @@
 
               <form 
                 class="forms-sample" 
-                @if (empty($category['id']))
-                action="{{ url('admin/add-edit-category') }}"
+                @if (empty($cmspage['id']))
+                action="{{ url('admin/add-edit-cms-page') }}"
                 @else
-                action="{{ url('admin/add-edit-category/'.$category['id']) }}"    
+                action="{{ url('admin/add-edit-cms-page/'.$cmspage['id']) }}"    
                 @endif
                 method="POST"
-                id="updateAdminPasswordForm"
-                name="updateAdminPasswordForm"
+                id="updateCmsPageForm"
+                name="updateCmsPageForm"
                 enctype="multipart/form-data"
               >
               @csrf
                 <div class="form-group">
-                  <label for="category_name">Category Name</label>
+                  <label for="title">Title</label>
                   <input 
                     type="text" 
                     class="form-control" 
-                    @if (!empty($category['category_name']))
-                    value="{{ $category['category_name'] }}"
+                    @if (!empty($cmspage['title']))
+                    value="{{ $cmspage['title'] }}"
                     @else
-                    value=""    
+                    value="{{ old('title') }}"    
                     @endif 
-                    name="category_name" 
-                    id="category_name" 
-                    placeholder="Enter Category Name"
+                    name="title" 
+                    id="title" 
+                    placeholder="Enter Title"
                   >
                 </div>
                 <div class="form-group">
-                  <label for="section_id">Select Section</label>
-                  <select class="form-control"  name="section_id" id="section_id">
-                    <option value="" style="display: none">Select</option>
-                    @foreach ($getSections as $section)
-                    <option 
-                      value="{{ $section['id'] }}"
-                      @if (!empty($category['section_id']) && $category['section_id'] == $section['id'])
-                      selected
-                      @endif
-                    >
-                      {{ $section['name'] }}
-                    </option>    
-                    @endforeach
-                  </select>
-                </div>
-
-                <div id="appendCategoriesLevel">
-                  @include('admin.categories.append_categories_level')
-                </div>
-                
-                <div class="form-group">
-                  <label for="category_image">Category Image</label>
-                  <input 
-                    type="file" 
-                    class="form-control" 
-                    value="{{ Auth::guard('admin')->user()->image }}" 
-                    name="category_image" 
-                    id="category_image"
-                  >
-                  @if (!empty($category['category_image']))
-                    <a 
-                      href="{{ url('front/images/category_images/'.$category['category_image']) }}"
-                      target="_blank"
-                    >
-                      View Image
-                    </a>
-                    &nbsp;|&nbsp;
-                    <a 
-                      href="javascript:void(0)"
-                      class="confirmDelete"
-                      module="category-image"
-                      moduleId="{{ $category['id'] }}"
-                    >
-                      Delete Image
-                    </a>
-                  @endif
-                </div>
-                <div class="form-group">
-                    <label for="category_discount">Category Discount</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        @if (!empty($category['discount']))
-                        value="{{ old('discount') }}"
-                        @else
-                        value="{{ $category['discount'] }}"    
-                        @endif 
-                        name="category_discount" 
-                        id="category_discount" 
-                        placeholder="Enter Category Discount"
-                    >
-                </div>
-                <div class="form-group">
-                    <label for="description">Category Description</label>
+                    <label for="description">Description</label>
                     <textarea 
                         name="description" 
                         id="description"
                         class="form-control" 
                         rows="3"
                     >
-                      @if (!empty($category['description']))
-                      {{ $category['description'] }}  
+                      @if (!empty($cmspage['description']))
+                      {{ $cmspage['description'] }}  
                       @endif
                     </textarea>
                 </div>
                 <div class="form-group">
-                    <label for="url">Category URL</label>
+                    <label for="url">Page URL</label>
                     <input 
                         type="text" 
                         class="form-control" 
-                        @if (!empty($category['url']))
-                        value="{{ $category['url'] }}"
+                        @if (!empty($cmspage['url']))
+                        value="{{ $cmspage['url'] }}"
                         @else
                         value="{{ old('url') }}"    
                         @endif 
                         name="url" 
                         id="url" 
-                        placeholder="Enter Category URL"
+                        placeholder="Enter URL"
                     >
                 </div>
                 <div class="form-group">
@@ -190,10 +127,10 @@
                     <input 
                         type="text" 
                         class="form-control" 
-                        @if (empty($category['meta_title']))
-                        value="{{ old('meta_title') }}"
+                        @if (!empty($cmspage['meta_title']))
+                        value="{{ $cmspage['meta_title'] }}"
                         @else
-                        value="{{ $category['meta_title'] }}"    
+                        value="{{ old('meta_title') }}"    
                         @endif 
                         name="meta_title" 
                         id="meta_title" 
@@ -205,10 +142,10 @@
                     <input 
                         type="text" 
                         class="form-control" 
-                        @if (empty($category['meta_description']))
-                        value="{{ old('meta_description') }}"
+                        @if (!empty($cmspage['meta_description']))
+                        value="{{ $cmspage['meta_description'] }}"
                         @else
-                        value="{{ $category['meta_description'] }}"    
+                        value="{{ old('meta_description') }}"   
                         @endif 
                         name="meta_description" 
                         id="meta_description" 
@@ -220,10 +157,10 @@
                     <input 
                         type="text" 
                         class="form-control" 
-                        @if (empty($category['meta_keywords']))
+                        @if (empty($cmspage['meta_keywords']))
                         value="{{ old('meta_keywords') }}"
                         @else
-                        value="{{ $category['meta_keywords'] }}"    
+                        value="{{ $cmspage['meta_keywords'] }}"    
                         @endif 
                         name="meta_keywords" 
                         id="meta_keywords" 

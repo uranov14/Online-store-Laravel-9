@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Cart;
 
 class Product extends Model
 {
@@ -34,9 +35,11 @@ class Product extends Model
     }
 
     public static function getDiscountPrice($product_id) {
+        //dd($product_id);
         $productDetails = Product::select('product_price', 'product_discount', 'category_id')->where('id', $product_id)->first();
+        //dd($productDetails);
         $productDetails = json_decode(json_encode($productDetails), true);
-
+        
         $categoryDiscount = Category::select('category_discount')->where('id', $productDetails['category_id'])->first();
         $categoryDiscount = json_decode(json_encode($categoryDiscount), true);
 
@@ -90,5 +93,19 @@ class Product extends Model
     public static function getProductImage($product_id) {
         $getProductImage = Product::select('product_image')->where('id', $product_id)->first()->toArray();
         return $getProductImage['product_image'];
+    }
+
+    public static function getProductStatus($product_id) {
+        $getProductStatus = Product::select('status')->where('id', $product_id)->first();
+        return $getProductStatus->status;
+    }
+
+    /* public static function getProductCategory($product_id) {
+        $getProductCategory = Product::select('category_id')->where('id', $product_id)->first();
+        return $getProductCategory->category_id;
+    } */
+
+    public static function deleteCartProduct($product_id) {
+        Cart::where('product_id', $product_id)->delete();
     }
 }
